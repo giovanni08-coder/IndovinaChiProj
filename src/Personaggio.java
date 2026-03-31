@@ -79,5 +79,6 @@ public class Personaggio {
         return diff;
     }
 
-    
+    // TODO
+    // Inserire un metodo clone per salvare il personaggio da implementare poi nel Main
 }
