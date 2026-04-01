@@ -1,2 +1,13 @@
+import java.util.List;
+
 public class Personaggio {
+    private List<String> caratteristiche;
+    private String nome;
+    private String Url;
+
+    public Personaggio(List<String> caratteristiche, String url, String nome) {
+        this.caratteristiche = caratteristiche;
+        Url = url;
+        this.nome = nome;
+    }
 }
