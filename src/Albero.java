@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Albero {
     private Nodo root;
@@ -28,12 +29,23 @@ public class Albero {
         }
     }
 
-    public Personaggio[] getPersone(String domanda, boolean dx) {
-        Nodo nodoDomanda = getNodo(root,domanda,dx);
-        if (nodoDomanda.getNododx()== null){
-
+    private void getPersoneRimasteRic(Nodo nodo, ArrayList<Personaggio> persone) {
+        if(nodo.getPersonaggio()!=null) persone.add(nodo.getPersonaggio());
+        else{
+            if(nodo.getNododx()!=null){
+                getPersoneRimasteRic(nodo.getNododx(), persone);
+            }
+            if(nodo.getNodosx()!=null){
+                getPersoneRimasteRic(nodo.getNodosx(), persone);
+            }
         }
+    }
 
+    public ArrayList<Personaggio> getPersoneRimaste(Nodo nodo){
+        if (nodo== null) throw new IllegalArgumentException("Il nodo non può essere null!");
+        ArrayList<Personaggio> persone = new ArrayList<>();
+        getPersoneRimasteRic(nodo, persone);
+        return persone;
     }
 
     public Nodo getNodo(Nodo partenza, String domanda) {
