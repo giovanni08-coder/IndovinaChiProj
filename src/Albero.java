@@ -9,7 +9,7 @@ public class Albero {
     }
 
     public void AggiungiNodo(Nodo nodo, Nodo NodoArrivo, boolean dx) {
-        Nodo NodoSostituire = null;
+        Nodo NodoSostituire;
        if (getNodo(NodoArrivo,NodoArrivo.getDomanda())==null){
            throw new IllegalArgumentException("Non puoi aggiungere ad un nodo che non esiste");
        }
