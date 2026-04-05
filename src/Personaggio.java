@@ -10,4 +10,11 @@ public class Personaggio {
         Url = url;
         this.nome = nome;
     }
+
+    public String getNome() {
+        return nome; }
+
+    public String getUrl()  {
+        return Url; }
+    
 }
