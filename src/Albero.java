@@ -1,11 +1,14 @@
 import java.util.ArrayList;
-import java.util.List;
 
 public class Albero {
     private Nodo root;
 
     public Albero(Nodo root) {
         this.root = root;
+    }
+
+    public Nodo getRoot() {
+        return root;
     }
 
     public void AggiungiNodo(Nodo nodo, Nodo NodoArrivo, boolean dx) {
