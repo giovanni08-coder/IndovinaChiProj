@@ -16,5 +16,5 @@ public class Personaggio {
 
     public String getUrl()  {
         return Url; }
-    
+
 }
