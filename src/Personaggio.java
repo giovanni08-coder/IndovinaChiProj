@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.List;
 
-public class Personaggio {
+public class Personaggio implements Serializable {
     private List<String> caratteristiche;
     private String nome;
     private String Url;

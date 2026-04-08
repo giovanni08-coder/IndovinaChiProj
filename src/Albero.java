@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Albero {
+public class Albero implements Serializable {
     private Nodo root;
 
     public Albero(Nodo root) {
@@ -13,7 +14,7 @@ public class Albero {
 
     public void AggiungiNodo(Nodo nodo, Nodo NodoArrivo, boolean dx) {
         Nodo NodoSostituire;
-        if (getNodo(NodoArrivo,null, NodoArrivo.getDomanda()) == null) {
+        if (nodo == null) {
             throw new IllegalArgumentException("Non puoi aggiungere ad un nodo che non esiste");
         }
         if (NodoArrivo.getPersonaggio() != null) {
@@ -50,18 +51,17 @@ public class Albero {
     }
 
     public Nodo getNodo(Nodo partenza, Nodo arrivo, String domanda) { // QUANDO CHIAMI LA FUNZIONE arrivo è null PERCHè è SOLO UNA VARIBILE PER SALVARE IL RISULTATO
-        if (partenza.getDomanda() != null) {
-            if (partenza.getNododx().getDomanda() == domanda) {
+        if (partenza != null) {
+            if (partenza.getNododx() !=null && partenza.getNododx().getDomanda() == domanda) {
                 arrivo = partenza.getNododx();
-            } else if (partenza.getNodosx().getDomanda() == domanda) {
+                return arrivo;
+            } else if (partenza.getNodosx() !=null &&partenza.getNodosx().getDomanda() == domanda) {
                 arrivo = partenza.getNodosx();
+                return arrivo;
             } else {
                 getNodo(partenza.getNododx(), arrivo, domanda);
                 getNodo(partenza.getNodosx(), arrivo, domanda);
             }
-        }
-        if (arrivo == null) {
-            throw new IllegalArgumentException("Non ho trovato il nodo che mi hai detto");
         }
         return arrivo;
     }

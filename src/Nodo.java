@@ -1,4 +1,6 @@
-public abstract class Nodo {
+import java.io.Serializable;
+
+public class Nodo implements Serializable {
 private Nodo Nododx;
 private Nodo Nodosx;
 private String domanda;
