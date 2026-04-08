@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public abstract class Giocatore {
     private String nome;
-    private Albero albero;
+    protected Albero albero;
     private Personaggio[] tabellone;
 
     public Giocatore(String nome, Albero albero, Personaggio[] tabellone) {
@@ -36,6 +36,6 @@ public abstract class Giocatore {
         }
 
     }
-    abstract public String ChiediDomanda();
+    abstract public String ChiediDomanda(Nodo nodocorrente);
 
 }
