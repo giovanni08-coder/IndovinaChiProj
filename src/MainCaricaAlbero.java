@@ -1,26 +1,28 @@
+import Pelle.ColorePelle;
+
 void main() throws Exception {
     //DONNE
     Albero albero = new Albero(new Nodo("è donna?"));
     albero.AggiungiNodo(new Nodo("Ha i capelli biondi?"),albero.getRoot(),true);
 
     albero.AggiungiNodo(new Nodo("Ha gli occhiali"),albero.getRoot().getNododx(),true); // == albero.root.destra.destra
-    albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("Donna","Bionda","Occhiali"),"Immagini/Giocatori/20.png","Sarah")),albero.getRoot().getNododx().getNododx(),true);
-    albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("Donna","Bionda"),"Immagini/Giocatori/1.png","Anita")),albero.getRoot().getNododx().getNododx(),false);
+    albero.AggiungiNodo(new Nodo(new Personaggio(ColoriCapelli.BIONDI,ColoriOcchi.MARRONI, ColorePelle.CHIARA,false,false,true,true,false,false,false,true,false,"Immagini/Giocatori/20.png","Sarah")),albero.getRoot().getNododx().getNododx(),true);
+    albero.AggiungiNodo(new Nodo(new Personaggio(ColoriCapelli.BIONDI,ColoriOcchi.AZZURRI, ColorePelle.CHIARA,false,false,false,false,false,false,false,false,false,"Immagini/Giocatori/1.png","Anita")),albero.getRoot().getNododx().getNododx(),false);
 
     albero.AggiungiNodo(new Nodo("Ha gli orecchini"),albero.getRoot().getNododx(),false);// == albero.root.destra.sinistra
 
     albero.AggiungiNodo(new Nodo("è Giovane?"),albero.getRoot().getNododx().getNodosx(),true); // == albero.root.destra.sinistra.destra
-    albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("Donna","Orecchini","Anziana","Capelli Bianchi"),"Immagini/Giocatori/2.png","Anne")),albero.getRoot().getNododx().getNodosx().getNododx(),false);
+    albero.AggiungiNodo(new Nodo(new Personaggio(ColoriCapelli.BIANCHI,ColoriOcchi.MARRONI, ColorePelle.CHIARA,false,false,true,true,false,false,false,false,false"Immagini/Giocatori/2.png","Anne")),albero.getRoot().getNododx().getNodosx().getNododx(),false);
 
     albero.AggiungiNodo(new Nodo("Ha il capello?"),albero.getRoot().getNododx().getNodosx().getNododx(),true);
-    albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("Castana","Capello","Giovane","Orecchini"),"Immagini/Giocatori/15.png","Marta")),albero.getRoot().getNododx().getNodosx().getNododx().getNododx(),true);
-    albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("Castana","Giovane","Orecchini"),"Immagini/Giocatori/15.png","Katrin")),albero.getRoot().getNododx().getNodosx().getNododx().getNododx(),false);
+    albero.AggiungiNodo(new Nodo(new Personaggio(ColoriCapelli.CASTANI,ColoriOcchi.MARRONI, ColorePelle.CHIARA,false,false,true,false,false,true,false,true,false,"Immagini/Giocatori/15.png","Marta")),albero.getRoot().getNododx().getNodosx().getNododx().getNododx(),true);
+    albero.AggiungiNodo(new Nodo(new Personaggio(ColoriCapelli.CASTANI,ColoriOcchi.MARRONI, ColorePelle.CHIARA,false,false,true,false,false,false,false,false,false"Immagini/Giocatori/15.png","Katrin")),albero.getRoot().getNododx().getNodosx().getNododx().getNododx(),false);
 
     albero.AggiungiNodo(new Nodo("ha i capelli rossi?"),albero.getRoot().getNododx().getNodosx(),false); // == root.destra.sinistra.sinistra
-    albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("donna","rossa"),"Immagini/Giocatori/11.png","Isabelle")),albero.getRoot().getNododx().getNodosx().getNodosx(),true);
+    albero.AggiungiNodo(new Nodo(new Personaggio(ColoriCapelli.ROSSI,ColoriOcchi.MARRONI, ColorePelle.CHIARA,false,false,false,false,false,true,false,false,false,"Immagini/Giocatori/11.png","Isabelle")),albero.getRoot().getNododx().getNodosx().getNodosx(),true);
     albero.AggiungiNodo(new Nodo("è castana?"),albero.getRoot().getNododx().getNodosx().getNodosx(),false);
-    albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("Donna","Castana"),"Immagini/Giocatori/4.png","Carmen")),albero.getRoot().getNododx().getNodosx().getNodosx().getNodosx(),true);
-    albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("Donna","Capelli neri"),"Immagini/Giocatori/21.png","Sophie")),albero.getRoot().getNododx().getNodosx().getNodosx().getNodosx(),false);
+    albero.AggiungiNodo(new Nodo(new Personaggio(ColoriCapelli.CASTANI,ColoriOcchi.MARRONI, ColorePelle.SCURA,false,false,false,false,false,true,false,false,false,"Immagini/Giocatori/4.png","Carmen")),albero.getRoot().getNododx().getNodosx().getNodosx().getNodosx(),true);
+    albero.AggiungiNodo(new Nodo(new Personaggio(ColoriCapelli.NERI,ColoriOcchi.MARRONI, ColorePelle.SCURA,false,false,false,true,false,true,false,false,false,"Immagini/Giocatori/21.png","Sophie")),albero.getRoot().getNododx().getNodosx().getNodosx().getNodosx(),false);
 
     //UOMO
     albero.AggiungiNodo(new Nodo("è calvo?"),albero.getRoot(),false);
@@ -28,8 +30,8 @@ void main() throws Exception {
     //BAFFI
     albero.AggiungiNodo(new Nodo("Hai baffi"),albero.getRoot().getNodosx(),true);
     albero.AggiungiNodo(new Nodo("Ha il pizetto"),albero.getRoot().getNodosx().getNododx(),true);
-    albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("Calvo","Pizzetto"),"Immagini/Giocatori/19.png","Roger")),albero.getRoot().getNodosx().getNododx().getNododx(),true);
-    albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("Calvo","Occhiali"),"Immagini/Giocatori/5.png","Charles")),albero.getRoot().getNodosx().getNododx().getNododx(),false);
+    albero.AggiungiNodo(new Nodo(new Personaggio(ColoriCapelli.NESSUNO,ColoriOcchi.MARRONI, ColorePelle.SCURA,true,false,false,false,true,false,false,false,true,"Immagini/Giocatori/19.png","Roger")),albero.getRoot().getNodosx().getNododx().getNododx(),true);
+    albero.AggiungiNodo(new Nodo(new Personaggio(ColoriCapelli.NESSUNO,ColoriOcchi.MARRONI, ColorePelle.CHIARA,false,true,false,true,false,true,false,false,true,"Immagini/Giocatori/5.png","Charles")),albero.getRoot().getNodosx().getNododx().getNododx(),false);
     albero.AggiungiNodo(new Nodo("Ha le sopracciglia scure"),albero.getRoot().getNodosx().getNododx(),false);
     albero.AggiungiNodo(new Nodo(new Personaggio(Arrays.asList("Uomo","Calvo","Sopracciglia scure"),"Immagini/Giocatori/6.png","Daniel")),albero.getRoot().getNodosx().getNododx().getNodosx(),true);
     albero.AggiungiNodo(new Nodo("Ha la barba"),albero.getRoot().getNodosx().getNododx().getNodosx(),false);
