@@ -1,5 +1,3 @@
-import Pelle.ColorePelle;
-
 void main() throws Exception {
     //DONNE
     Albero albero = new Albero(new Nodo("è donna?"));

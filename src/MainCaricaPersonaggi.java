@@ -1,5 +1,3 @@
-import Pelle.ColorePelle;
-
 void main() throws Exception {
     Personaggio[] personaggi = new Personaggio[24];
     Personaggio p1 = new Personaggio(ColoriCapelli.BIONDI,ColoriOcchi.AZZURRI, ColorePelle.CHIARA,false,false,false,false,false,false,false,false,false,"Immagini/Giocatori/1.png","Anita");
