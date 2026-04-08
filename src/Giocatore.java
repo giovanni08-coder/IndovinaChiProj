@@ -11,10 +11,10 @@ public abstract class Giocatore {
         this.albero = albero;
         this.tabellone = tabellone;
     }
-    public void EliminaPersonaggio(String domanda,String risposta){
+    protected void EliminaPersonaggio(String domanda,String risposta){
         int pos = 0;
         boolean trovato;
-        Nodo nodo = albero.getNodo(albero.getRoot(), domanda);
+        Nodo nodo = albero.getNodo(albero.getRoot(),null, domanda);
         ArrayList<Personaggio> personerimaste;
         if (risposta=="si"){
             personerimaste = albero.getPersoneRimaste(nodo.getNododx());
@@ -36,6 +36,5 @@ public abstract class Giocatore {
         }
 
     }
-    abstract public String ChiediDomanda(Nodo nodocorrente);
 
 }

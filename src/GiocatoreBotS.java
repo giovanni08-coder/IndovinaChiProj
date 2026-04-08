@@ -3,7 +3,6 @@ public class GiocatoreBotS extends Giocatore {
         super(nome, albero, tabellone);
     }
 
-    @Override
     public String ChiediDomanda(Nodo nodoCorrente) {
         if (nodoCorrente == null || nodoCorrente.getDomanda() == null) {
            throw new IllegalArgumentException("Hai finito le domande e hai trovato il personaggio finale");
