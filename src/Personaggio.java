@@ -103,4 +103,12 @@ public class Personaggio implements Serializable {
     public String getUrl()  {
         return Url; }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj==null) return false;
+        if (getClass() != obj.getClass() ) return false;
+        Personaggio altro = (Personaggio) obj;
+        return this.getNome().equals(((Personaggio) obj).getNome());
+    }
 }
