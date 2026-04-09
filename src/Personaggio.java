@@ -19,6 +19,7 @@ public class Personaggio implements Serializable {
     private String percorsoImmagine;
     private final static List<String> nomi = new ArrayList<>();
     private String Url;
+    private static final long serialVersionUID = 4606382356071024846L;
 
     public Personaggio(ColoriCapelli capelli,ColoriOcchi occhi,ColorePelle pelle,boolean pizzettto, boolean baffi,boolean orecchini,boolean occhiali,boolean sesso, boolean capelliLunghi,boolean barba,boolean cappello,boolean pelato,String url, String nome) {
         Url = url;
@@ -27,7 +28,7 @@ public class Personaggio implements Serializable {
         setColoreOcchi(occhi);
         setColorePelle(pelle);
         setBaffi(baffi);
-        setBarba(barba);
+        setPizzettto(pizzettto);
         setOrecchini(orecchini);
         setOcchiali(occhiali);
         setSesso(sesso);
