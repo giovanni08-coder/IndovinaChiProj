@@ -84,7 +84,7 @@ void main() throws Exception {
     Personaggio p18 = new Personaggio(ColoriCapelli.NESSUNO,ColoriOcchi.MARRONI, ColorePelle.CHIARA,false,false,false,false,true,false,true,false,true,"Immagini/Giocatori/18.png","Philippe");
     Personaggio p19 = new Personaggio(ColoriCapelli.NESSUNO,ColoriOcchi.MARRONI, ColorePelle.SCURA,true,false,false,false,true,false,false,false,true,"Immagini/Giocatori/19.png","Roger");
     Personaggio p20 = new Personaggio(ColoriCapelli.BIONDI,ColoriOcchi.MARRONI, ColorePelle.CHIARA,false,false,true,true,false,false,false,true,false,"Immagini/Giocatori/20.png","Sarah");
-    Personaggio p21 = new Personaggio(ColoriCapelli.NERI,ColoriOcchi.MARRONI, ColorePelle.SCURA,false,false,false,true,false,true,false,false,false,"Immagini/Giocatori/21.png","Charles");
+    Personaggio p21 = new Personaggio(ColoriCapelli.NERI,ColoriOcchi.MARRONI, ColorePelle.SCURA,false,false,false,true,false,true,false,false,false,"Immagini/Giocatori/21.png","Sophie");
     Personaggio p22 = new Personaggio(ColoriCapelli.ROSSI,ColoriOcchi.AZZURRI, ColorePelle.CHIARA,false,true,false,false,true,false,false,false,false,"Immagini/Giocatori/22.png","Stephen");
     Personaggio p23 = new Personaggio(ColoriCapelli.NERI,ColoriOcchi.MARRONI, ColorePelle.CHIARA,false,true,false,false,true,false,false,false,false,"Immagini/Giocatori/23.png","Theo");
     Personaggio p24 = new Personaggio(ColoriCapelli.BIANCHI,ColoriOcchi.MARRONI, ColorePelle.CHIARA,false,false,false,false,true,false,false,false,false,"Immagini/Giocatori/24.png","Victor");
