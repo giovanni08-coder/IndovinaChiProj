@@ -159,6 +159,6 @@ void main() throws Exception {
     genere.put("Orecchini",mappaOrecchini);
     genere.put("Occhiali",mappaOcchiali);
     genere.put("Barba",mappaBarba);
-    genere.put("Capello",mappaCappello);
+    genere.put("Cappello",mappaCappello);
     GestoreFile.Scrivi_binariDomande(genere);
 }

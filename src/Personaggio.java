@@ -103,6 +103,46 @@ public class Personaggio implements Serializable {
     public String getUrl()  {
         return Url; }
 
+    public boolean isPizzettto() {
+        return pizzettto;
+    }
+
+    public boolean isBaffi() {
+        return baffi;
+    }
+
+    public boolean isOrecchini() {
+        return orecchini;
+    }
+
+    public boolean isOcchiali() {
+        return occhiali;
+    }
+
+    public boolean isBarba() {
+        return barba;
+    }
+
+    public boolean isCappello() {
+        return cappello;
+    }
+
+    public boolean isSesso() {
+        return sesso;
+    }
+
+    public ColorePelle getColorePelle() {
+        return colorePelle;
+    }
+
+    public ColoriOcchi getColoreOcchi() {
+        return coloreOcchi;
+    }
+
+    public ColoriCapelli getColoreCapelli() {
+        return coloreCapelli;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
