@@ -7,7 +7,7 @@ import java.util.Map;
 public class GestoreFile implements Serializable {
     public static void Scrivi_binarioAlbero(Albero albero) throws Exception {
         OutputStream Stream = new FileOutputStream("data.bin");
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("albero.bin"))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data.bin"))) {
             oos.writeObject(albero); // serializza TUTTO l'albero
         }
 
@@ -19,7 +19,7 @@ public class GestoreFile implements Serializable {
 
     public static Albero Leggi_binarioAlbero() throws Exception {
         Albero alberostatico;
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("albero.bin"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("data.bin"))) {
             alberostatico = (Albero) ois.readObject(); //oopure puoi mettere: inStream.readObject() ---> down-casting object
         }
         return alberostatico;
