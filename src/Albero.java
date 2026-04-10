@@ -24,7 +24,6 @@ public class Albero implements Serializable {
                 NodoSostituire = NodoArrivo;
                 NodoArrivo = nodo;
                 NodoArrivo.AggiungiNodo(NodoSostituire, dx);
-
             }
         } else {
             NodoArrivo.AggiungiNodo(nodo, dx);
@@ -50,34 +49,34 @@ public class Albero implements Serializable {
         return persone;
     }
 
-    public Nodo getNodo(Nodo partenza, Nodo arrivo, String domanda) { // QUANDO CHIAMI LA FUNZIONE arrivo è null PERCHè è SOLO UNA VARIBILE PER SALVARE IL RISULTATO
+    // FIX 1: uso di .equals() al posto di == per confrontare stringhe
+    // FIX 2: il risultato della ricorsione viene ora ritornato correttamente
+    public Nodo getNodo(Nodo partenza, Nodo arrivo, String domanda) {
         if (partenza != null) {
-            if (partenza.getNododx() !=null && partenza.getNododx().getDomanda() == domanda) {
-                arrivo = partenza.getNododx();
-                return arrivo;
-            } else if (partenza.getNodosx() !=null &&partenza.getNodosx().getDomanda() == domanda) {
-                arrivo = partenza.getNodosx();
-                return arrivo;
+            if (partenza.getNododx() != null && domanda.equals(partenza.getNododx().getDomanda())) {
+                return partenza.getNododx();
+            } else if (partenza.getNodosx() != null && domanda.equals(partenza.getNodosx().getDomanda())) {
+                return partenza.getNodosx();
             } else {
-                getNodo(partenza.getNododx(), arrivo, domanda);
-                getNodo(partenza.getNodosx(), arrivo, domanda);
+                Nodo risultato = getNodo(partenza.getNododx(), arrivo, domanda);
+                if (risultato != null) return risultato;
+                return getNodo(partenza.getNodosx(), arrivo, domanda);
             }
         }
-        return arrivo;
+        return null;
     }
 
+    // FIX 3: il risultato della ricorsione viene ora ritornato correttamente
     public Nodo getNodoPadre(Nodo partenza, Nodo Padre, Nodo Figlio) {
-        if (partenza.getNododx()!= null && partenza.getNododx() == Figlio) {
-            Padre = partenza;
-        } else if (partenza.getNodosx()!=null && partenza.getNodosx() == Figlio) {
-            Padre = partenza;
+        if (partenza == null) return null;
+        if (partenza.getNododx() != null && partenza.getNododx() == Figlio) {
+            return partenza;
+        } else if (partenza.getNodosx() != null && partenza.getNodosx() == Figlio) {
+            return partenza;
         } else {
-            getNodoPadre(partenza.getNododx(), Padre, Figlio);
-            getNodoPadre(partenza.getNodosx(), Padre, Figlio);
+            Nodo risultato = getNodoPadre(partenza.getNododx(), Padre, Figlio);
+            if (risultato != null) return risultato;
+            return getNodoPadre(partenza.getNodosx(), Padre, Figlio);
         }
-        if (Padre==null){
-            throw new IllegalArgumentException("Non ho trovato il nodo");
-        }
-        return Padre;
     }
 }

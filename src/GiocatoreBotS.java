@@ -16,9 +16,6 @@ public class GiocatoreBotS extends Giocatore {
     private Nodo trovaNodoDomanda(Nodo nodo) {
         if (nodo == null || nodo.getPersonaggio() != null) return null;
 
-        ArrayList<Personaggio> attivi = getPersonaggiAttivi();
-        if (attivi.isEmpty()) return null;
-
         // Controlla se questo nodo è utile (almeno 1 personaggio attivo nel ramo dx E sx)
         ArrayList<Personaggio> sinistri = albero.getPersoneRimaste(nodo.getNodosx() != null ? nodo.getNodosx() : nodo);
         ArrayList<Personaggio> destri   = albero.getPersoneRimaste(nodo.getNododx() != null ? nodo.getNododx() : nodo);
@@ -27,7 +24,7 @@ public class GiocatoreBotS extends Giocatore {
         boolean haAttivi_dx = destri.stream().anyMatch(p -> attivi.contains(p));
 
         if (haAttivi_dx && haAttivi_sx) {
-            return nodo; // Questo nodo è utile: divide i personaggi rimanenti
+            return nodo; // divide i personaggi rimanenti
         }
 
         // Altrimenti scendi nel ramo più promettente
