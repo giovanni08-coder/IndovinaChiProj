@@ -1,12 +1,14 @@
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-//classe che serve per mostrare le immagini
-public class ImagePanel extends Panel {
+/** Pannello Swing per mostrare un'immagine scalata. */
+public class ImagePanel extends JPanel {
     private BufferedImage immagine;
 
     public ImagePanel(int w, int h) {
         setPreferredSize(new Dimension(w, h));
+        setOpaque(false);
     }
 
     public void setImage(Image img) {
@@ -18,9 +20,11 @@ public class ImagePanel extends Panel {
         repaint();
     }
 
-    @Override public void paint(Graphics g) {
-        if (immagine != null) g.drawImage(immagine, 0, 0, getWidth(), getHeight(), this);
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (immagine != null) {
+            g.drawImage(immagine, 0, 0, getWidth(), getHeight(), this);
+        }
     }
-
-    @Override public void update(Graphics g) { paint(g); } // evita sfarfallio AWT
 }
