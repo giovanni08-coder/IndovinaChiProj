@@ -121,7 +121,7 @@ void main() throws Exception {
     Map<String, ArrayList<Personaggio>> mappaCapelli = new HashMap<>();
     mappaCapelli.put("Ha i capelli rossi?", new ArrayList<>(Arrays.asList(personaggi[10], personaggi[21])));
     mappaCapelli.put("Ha i capelli neri?",new ArrayList<>(Arrays.asList(personaggi[15], personaggi[20],personaggi[22])));
-    mappaCapelli.put("Ha i capelli biondi?",new ArrayList<>(Arrays.asList(personaggi[0],personaggi[8],personaggi[11],personaggi[13],personaggi[19])));
+    mappaCapelli.put("Ha i capelli biondi?",new ArrayList<>(Arrays.asList(personaggi[0],personaggi[6],personaggi[8],personaggi[11],personaggi[13],personaggi[19])));
     mappaCapelli.put("Ha i capelli castani?",new ArrayList<>(Arrays.asList(personaggi[2],personaggi[3],personaggi[12],personaggi[14])));
     mappaCapelli.put("Ha i capelli bianchi?",new ArrayList<>(Arrays.asList(personaggi[1],personaggi[16],personaggi[23])));
     mappaCapelli.put("è calvo?",new ArrayList<>(Arrays.asList(personaggi[4],personaggi[5],personaggi[9],personaggi[17],personaggi[18])));

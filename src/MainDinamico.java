@@ -1,6 +1,6 @@
 void EliminazioneDomandeInutili(Map<String, Map<String, ArrayList<Personaggio>>> GeneriDomande,Personaggio[] personaggi){
-    int conta =0;
-    boolean caratteristicaPresente=false;
+    int conta;
+    boolean caratteristicaPresente;
     for (String genere : new ArrayList<>(GeneriDomande.keySet())) {
         Map<String, ArrayList<Personaggio>> domande = GeneriDomande.get(genere);
         for(String domanda: new ArrayList<>(domande.keySet())){
