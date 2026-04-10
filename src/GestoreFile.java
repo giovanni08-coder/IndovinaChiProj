@@ -5,37 +5,29 @@ import java.util.List;
 import java.util.Map;
 
 public class GestoreFile implements Serializable {
+
     public static void Scrivi_binarioAlbero(Albero albero) throws Exception {
-        OutputStream Stream = new FileOutputStream("data.bin");
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data.bin"))) {
-            oos.writeObject(albero); // serializza TUTTO l'albero
+            oos.writeObject(albero);
         }
-
-        // ASCII values for "Hello"
-        Stream.close();
-
     }
 
 
     public static Albero Leggi_binarioAlbero() throws Exception {
         Albero alberostatico;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("data.bin"))) {
-            alberostatico = (Albero) ois.readObject(); //oopure puoi mettere: inStream.readObject() ---> down-casting object
-        }
-        return alberostatico;
+            alberostatico = (Albero) ois.readObject();
+            return alberostatico;
 
+        }
     }
+
     public static void Scrivi_binarioPersonaggi(Personaggio[] personaggi) throws Exception {
-        OutputStream Stream = new FileOutputStream("personaggi.bin");
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("personaggi.bin"))) {
-            oos.writeObject(personaggi); // serializza TUTTA la lista
-
-            // ASCII values for "Hello"
-            Stream.close();
-
+            oos.writeObject(personaggi);
         }
     }
-
+    
 
     public static Personaggio[] Leggi_binarioPersonaggi() throws Exception {
         Personaggio[] personaggi;
