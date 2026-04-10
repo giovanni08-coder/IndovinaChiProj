@@ -16,7 +16,6 @@ public class Personaggio implements Serializable {
     private boolean barba;
     private boolean cappello;
     private boolean pelato;
-    private String percorsoImmagine;
     private final static List<String> nomi = new ArrayList<>();
     private String Url;
     private static final long serialVersionUID = 4606382356071024846L;
@@ -94,9 +93,6 @@ public class Personaggio implements Serializable {
         this.pelato = pelato;
     }
 
-    public void setPercorsoImmagine(String percorsoImmagine) {
-        this.percorsoImmagine = percorsoImmagine;
-    }
 
     public String getNome() {
         return nome; }
