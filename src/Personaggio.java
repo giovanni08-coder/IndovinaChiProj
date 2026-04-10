@@ -43,6 +43,7 @@ public class Personaggio implements Serializable {
             throw new IllegalArgumentException("Non puoi inserire questo personaggio");
         }
         this.nome = nome;
+        nomi.add(nome);
     }
 
     public void setPizzettto(boolean pizzettto) {

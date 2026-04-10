@@ -27,7 +27,7 @@ public class GestoreFile implements Serializable {
             oos.writeObject(personaggi);
         }
     }
-    
+
 
     public static Personaggio[] Leggi_binarioPersonaggi() throws Exception {
         Personaggio[] personaggi;

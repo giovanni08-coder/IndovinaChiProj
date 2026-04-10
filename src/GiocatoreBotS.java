@@ -2,21 +2,35 @@ import java.util.ArrayList;
 
 public class GiocatoreBotS extends Giocatore {
 
+    // FIX: aggiunto campo mancante nodoCorrente e lista attivi
+    private Nodo nodoCorrente;
+    private ArrayList<Personaggio> attivi;
+
     public GiocatoreBotS(String nome, Albero albero, Personaggio[] tabellone) {
         super(nome, albero, tabellone);
+        this.nodoCorrente = albero.getRoot();
+        // FIX: inizializzazione della lista attivi dal tabellone
+        this.attivi = new ArrayList<>();
+        for (Personaggio p : tabellone) {
+            if (p != null) attivi.add(p);
+        }
     }
 
-    public String ChiediDomanda(Nodo nodoCorrente) {
-        if (nodoCorrente == null || nodoCorrente.getDomanda() == null) {
-            return null; // Nessuna domanda disponibile → dovrebbe indovinare
+    // FIX: aggiunto metodo mancante getPersonaggiAttivi()
+    public ArrayList<Personaggio> getPersonaggiAttivi() {
+        return attivi;
+    }
+
+    public String ChiediDomanda(Nodo nodo) {
+        if (nodo == null || nodo.getDomanda() == null) {
+            return null;
         }
-        return nodoCorrente.getDomanda();
+        return nodo.getDomanda();
     }
 
     private Nodo trovaNodoDomanda(Nodo nodo) {
         if (nodo == null || nodo.getPersonaggio() != null) return null;
 
-        // Controlla se questo nodo è utile (almeno 1 personaggio attivo nel ramo dx E sx)
         ArrayList<Personaggio> sinistri = albero.getPersoneRimaste(nodo.getNodosx() != null ? nodo.getNodosx() : nodo);
         ArrayList<Personaggio> destri   = albero.getPersoneRimaste(nodo.getNododx() != null ? nodo.getNododx() : nodo);
 
@@ -24,16 +38,16 @@ public class GiocatoreBotS extends Giocatore {
         boolean haAttivi_dx = destri.stream().anyMatch(p -> attivi.contains(p));
 
         if (haAttivi_dx && haAttivi_sx) {
-            return nodo; // divide i personaggi rimanenti
+            return nodo;
         }
 
-        // Altrimenti scendi nel ramo più promettente
         Nodo fromDx = trovaNodoDomanda(nodo.getNododx());
         if (fromDx != null) return fromDx;
         return trovaNodoDomanda(nodo.getNodosx());
     }
 
-    public void avanza(String risposta,Nodo nodoCorrente) {
+    // FIX: avanza aggiorna il campo della classe invece di una variabile locale
+    public void avanza(String risposta) {
         if (nodoCorrente == null) return;
         if (risposta.equalsIgnoreCase("si")) {
             nodoCorrente = nodoCorrente.getNododx();
@@ -42,12 +56,9 @@ public class GiocatoreBotS extends Giocatore {
         }
     }
 
-
-     // Se rimane un solo personaggio attivo, lo restituisce come guess finale.
-    public Personaggio indovinaPersonaggio(Nodo nodoCorrente) {
-        ArrayList<Personaggio> attivi = getPersonaggiAttivi();
-        if (attivi.size() == 1) return attivi.get(0);
-        // Se siamo arrivati a una foglia dell'albero
+    public Personaggio indovinaPersonaggio() {
+        ArrayList<Personaggio> attiviCorrente = getPersonaggiAttivi();
+        if (attiviCorrente.size() == 1) return attiviCorrente.get(0);
         if (nodoCorrente != null && nodoCorrente.getPersonaggio() != null) {
             return nodoCorrente.getPersonaggio();
         }
