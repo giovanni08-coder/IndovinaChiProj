@@ -35,7 +35,7 @@ public class GUI extends JFrame {
     static final int IW = 80;
     static final int IH = 92;
 
-    // dati 
+    // dati
     private Albero albero;
     private Personaggio[] tutti;
 
@@ -311,6 +311,51 @@ public class GUI extends JFrame {
         panBot.add(btnSi);
         panBot.add(Box.createVerticalStrut(8));
         panBot.add(btnNo);
+
+        // ── assemblaggio ─────────────────────────────────────────────────────
+        p.add(lblContatore);
+        p.add(Box.createVerticalStrut(12));
+        p.add(sep());
+        p.add(Box.createVerticalStrut(14));
+        p.add(panUmano);
+        p.add(panBot);
+        p.add(Box.createVerticalGlue());
+        return p;
+    }
+
+    //  AGGIORNA UI AL CAMBIO TURNO
+    private void aggiornaTurno() {
+        if (sidePanel == null) return;
+        sidePanel.setBackground(turnoUmano ? BG_PANEL : BG_PANEL_BOT);
+        panUmano.setVisible(turnoUmano);
+        panBot.setVisible(!turnoUmano);
+        ((CardLayout) cardCont.getLayout()).show(cardCont, turnoUmano ? "U" : "B");
+
+        if (turnoUmano) {
+            lblTurno.setText("Tocca a TE — elimina i personaggi del bot");
+            lblTurno.setForeground(ACCENT_BLUE);
+            aggiornaCombo();
+            lblRispostaBot.setText(" ");
+        } else {
+            lblTurno.setText("Turno BOT — rispondi alla sua domanda");
+            lblTurno.setForeground(ACCENT_PURPLE);
+
+            // GiocatoreBotS.ChiediDomanda(nodo) restituisce la domanda del nodo corrente.
+            // Usiamo getRoot() come nodo da cui leggere — il bot gestisce internamente
+            // il proprio nodo corrente tramite avanza().
+            // Poiché nodoCorrente è privato in GiocatoreBotS, recuperiamo la domanda
+            // direttamente da ChiediDomanda passandogli il nodo che il bot sta osservando:
+            // lo otteniamo tramite albero navigato con le risposte precedenti.
+            String domanda = getDomandaBot();
+            lblDomandaBot.setText("<html><div style='text-align:center;width:205px;'>" + domanda + "</div></html>");
+            boolean hasDomanda = domanda != null && !domanda.equals("—");
+            btnSi.setEnabled(hasDomanda);
+            btnNo.setEnabled(hasDomanda);
+        }
+        aggiornaContatore();
+        revalidate();
+        repaint();
+    }
 
 
 
