@@ -357,6 +357,130 @@ public class GUI extends JFrame {
         repaint();
     }
 
+    //  TURNO UMANO — usa GiocatoreUmanoS
+    private void gestisciDomandaUmano() {
+        if (combo.getItemCount() == 0) return;
+        DomandaGiocatore dq = (DomandaGiocatore) combo.getSelectedItem();
+        if (dq == null) return;
+
+        boolean risposta = dq.check(segBot);
+        lblRispostaBot.setText(risposta ? "✔  SI" : "✘  NO");
+        lblRispostaBot.setForeground(risposta ? BTN_SI : BTN_NO);
+        giàFatte.add(dq.testo);
+
+        // elimina dal tabellone umano i personaggi che non corrispondono alla risposta
+        for (int i = 0; i < tutti.length; i++) {
+            if (!elimU[i] && dq.check(tutti[i]) != risposta) {
+                elimU[i] = true;
+                cardsU[i].repaint();
+            }
+        }
+
+        try {
+            // verifichiamo che ci siano ancora personaggi rimasti sul tabellone umano
+            List<Personaggio> rimasti = rimasti(elimU);
+            if (rimasti.size() == 1) {
+                btnFai.setEnabled(false);
+            }
+        } catch (Exception ignored) {}
+
+        aggiornaCombo();
+        aggiornaContatore();
+
+        List<Personaggio> rimastiU = rimasti(elimU);
+        if (rimastiU.size() == 1) {
+            lblRispostaBot.setText(risposta ? "✔  SI" : "✘  NO");
+        }
+
+        Timer tmr = new Timer(900, e -> { turnoUmano = false; aggiornaTurno(); });
+        tmr.setRepeats(false);
+        tmr.start();
+    }
+
+    private void tentativoUmano() {
+        List<Personaggio> rim = rimasti(elimU);
+        if (rim.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Hai eliminato tutti! Ricomincia.", "Attenzione", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String[] nomi = new String[rim.size()];
+        for (int i = 0; i < rim.size(); i++) nomi[i] = rim.get(i).getNome();
+
+        String sc = (String) JOptionPane.showInputDialog(this,
+                "Chi è il personaggio segreto del bot?", "Indovina!",
+                JOptionPane.QUESTION_MESSAGE, null, nomi, nomi[0]);
+        if (sc == null) return;
+
+        if (sc.equals(segBot.getNome())) {
+            evidenzia(cardsU, segBot, elimU);
+            fine(true, "HAI INDOVINATO! \nIl personaggio del bot era: " + segBot.getNome());
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Sbagliato! Continua a fare domande...", "Risposta errata", JOptionPane.WARNING_MESSAGE);
+            turnoUmano = false;
+            aggiornaTurno();
+        }
+    }
+
+    //  TURNO BOT — usa GiocatoreBotS
+
+    /**
+     * Recupera la domanda corrente del bot tramite GiocatoreBotS.ChiediDomanda().
+     * Poiché nodoCorrente è privato, usiamo il nodo dell'albero navigato fino ad ora:
+     * manteniamo un riferimento al nodo corrente del bot in nodoBotNav.
+     */
+    private Nodo nodoBotNav = null;   // traccia il nodo corrente del bot (parallelo a GiocatoreBotS interno)
+
+    private String getDomandaBot() {
+        // Al primo turno bot partiamo dalla root
+        if (nodoBotNav == null) nodoBotNav = albero.getRoot();
+        // GiocatoreBotS.ChiediDomanda(nodo) — legge la domanda dal nodo passato
+        String d = giocatoreBot.ChiediDomanda(nodoBotNav);
+        return (d != null) ? d : "—";
+    }
+
+    private void rispondiBotDomanda(String risposta) {
+        if (nodoBotNav == null) nodoBotNav = albero.getRoot();
+        giocatoreBot.avanza(risposta);
+        nodoBotNav = risposta.equalsIgnoreCase("si")
+                ? nodoBotNav.getNododx()
+                : nodoBotNav.getNodosx();
+
+        if (nodoBotNav == null) {
+            fine(true, "Il bot si è perso... Hai vinto tu!");
+            return;
+        }
+
+        // nodo foglia: GiocatoreBotS.indovinaPersonaggio() restituisce il personaggio trovato
+        if (nodoBotNav.getPersonaggio() != null) {
+            Personaggio trovato = giocatoreBot.indovinaPersonaggio();
+            if (trovato == null) trovato = nodoBotNav.getPersonaggio(); // fallback
+            evidenzia(cardsB, trovato, elimB);
+            if (trovato.equals(segUmano)) {
+                fine(false, "Il bot ha indovinato! \nIl tuo personaggio era: " + segUmano.getNome());
+            } else {
+                fine(true, "Il bot ha sbagliato — hai vinto tu! \n(Il tuo era: " + segUmano.getNome() + ")");
+            }
+            return;
+        }
+
+        // elimina dal tabellone bot i personaggi del branch escluso
+        Nodo padre = albero.getNodoPadre(albero.getRoot(), null, nodoBotNav);
+        if (padre != null) {
+            Nodo escluso = (nodoBotNav == padre.getNododx()) ? padre.getNodosx() : padre.getNododx();
+            if (escluso != null) {
+                for (Personaggio pg : albero.getPersoneRimaste(escluso)) {
+                    for (int i = 0; i < tutti.length; i++) {
+                        if (!elimB[i] && tutti[i].equals(pg)) {
+                            elimB[i] = true;
+                            cardsB[i].repaint();
+                        }
+                    }
+                }
+            }
+        }
+
+
 
 
 
