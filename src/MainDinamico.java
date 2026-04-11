@@ -28,64 +28,91 @@ void EliminazioneDomandeInutili(Map<String, Map<String, ArrayList<Personaggio>>>
             GeneriDomande.remove(genere);
     }
 }
-void main() throws Exception {
-    Map<String, Map<String, ArrayList<Personaggio>>> GeneriDomande = GestoreFile.Leggi_binarioDomande();
-    Personaggio[] personaggi = GestoreFile.Leggi_binarioPersonaggi();
+Personaggio[] VerificaRisposta(Personaggio MiopersonaggioRandom,Personaggio[] MieiPersonaggi,String scelta,String GenereRandom,String DomandaRandom,Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomande){
+    Personaggio[] CopiaMieiPersonaggi = MieiPersonaggi.clone();
+    if (scelta.equals("si")) {
+        for (int i = 0; i < CopiaMieiPersonaggi.length; i++) {
+            if (!(MieiGeneriDomande.get(GenereRandom).get(DomandaRandom).contains(MieiPersonaggi[i]))) {
+                CopiaMieiPersonaggi[i] = null;
+            }
+        }
+    } else if (scelta.equals("no")) {
+        for (int i = 0; i < CopiaMieiPersonaggi.length; i++) {
+            if (MieiGeneriDomande.get(GenereRandom).get(DomandaRandom).contains(MieiPersonaggi[i])) {
+                CopiaMieiPersonaggi[i] = null;
+            }
+        }
 
+    } else {
+        throw new IllegalArgumentException("Non puoi inserire questa risposta");
+    }
+    List<Personaggio> lista = new ArrayList<>(Arrays.asList(CopiaMieiPersonaggi));
+    for (int i=0;i<lista.size();i++){
+        if (lista.get(i)==null) {
+            lista.remove(i);
+            i--;
+        }
+
+    }
+    if (!lista.contains(MiopersonaggioRandom)){
+        throw new IllegalArgumentException("HAI MENTITO, BUGIARDO, DAMMMI LA RISPOSTA GIUSTA");
+    }
+    else {
+        //lista.removeIf(e -> e == null);
+        MieiPersonaggi = lista.toArray(new Personaggio[0]);
+        if (scelta.equals("si")){
+            MieiGeneriDomande.remove(GenereRandom);
+        }
+        if (scelta.equals("no")){
+            if (GenereRandom.equals("Capelli")){
+                MieiGeneriDomande.get("Capelli").remove(DomandaRandom);
+            }
+            else {
+                MieiGeneriDomande.remove(GenereRandom);
+            }
+        }
+    }
+    return MieiPersonaggi;
+}
+void main() throws Exception {
+    Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomande = GestoreFile.Leggi_binarioDomande();
     Random r = new Random();
-    while (personaggi.length > 1) {
-        EliminazioneDomandeInutili(GeneriDomande,personaggi);
-        System.out.println(Arrays.asList(personaggi));
-        System.out.println(GeneriDomande.keySet());
-        List<String> ChiaviGeneri = new ArrayList<>(GeneriDomande.keySet());
+    Personaggio[] MieiPersonaggi = GestoreFile.Leggi_binarioPersonaggi();
+    Personaggio MioPersonaggio = MieiPersonaggi[r.nextInt(MieiPersonaggi.length)];
+
+    //Personaggio[] PersonaggiBot = GestoreFile.Leggi_binarioPersonaggi();
+    //Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomandeBot = GestoreFile.Leggi_binarioDomande();
+
+    System.out.println("Il tuo personaggio è: " + MioPersonaggio);
+
+    while (MieiPersonaggi.length > 1) {
+        boolean errore = true;
+        EliminazioneDomandeInutili(MieiGeneriDomande,MieiPersonaggi);
+        System.out.println(Arrays.asList(MieiPersonaggi));
+        System.out.println(MieiGeneriDomande.keySet());
+        List<String> ChiaviGeneri = new ArrayList<>(MieiGeneriDomande.keySet());
         String GenereRandom = ChiaviGeneri.get(r.nextInt(ChiaviGeneri.size()));
-        List<String> ChiaviDomande = new ArrayList<>(GeneriDomande.get(GenereRandom).keySet());
+        List<String> ChiaviDomande = new ArrayList<>(MieiGeneriDomande.get(GenereRandom).keySet());
 
 
         String DomandaRandom = ChiaviDomande.get(r.nextInt(ChiaviDomande.size()));
 
-
         String scelta = IO.readln(DomandaRandom);
         scelta = scelta.toLowerCase();
-
-        if (scelta.equals("si")) {
-            for (int i = 0; i < personaggi.length; i++) {
-                if (!(GeneriDomande.get(GenereRandom).get(DomandaRandom).contains(personaggi[i]))) {
-                    personaggi[i] = null;
-                }
+        while (errore) {
+            try {
+                MieiPersonaggi = VerificaRisposta(MioPersonaggio, MieiPersonaggi, scelta, GenereRandom, DomandaRandom, MieiGeneriDomande);
+                errore=false;
+            } catch (Exception e) {
+                System.out.println("HAI MENTITO, DIMMI LA VERITAAAAAAAA");
+                scelta= IO.readln("RIPROVA, E RISPONDI BENE: ");
             }
-            GeneriDomande.remove(GenereRandom);
-        } else if (scelta.equals("no")) {
-            for (int i = 0; i < personaggi.length; i++) {
-                if (GeneriDomande.get(GenereRandom).get(DomandaRandom).contains(personaggi[i])) {
-                    personaggi[i] = null;
-                }
-            }
-            if (GenereRandom.equals("Capelli")){
-                GeneriDomande.get("Capelli").remove(DomandaRandom);
-            }
-            else {
-                GeneriDomande.remove(GenereRandom);
-            }
-
-        } else {
-            throw new IllegalArgumentException("Non puoi inserire questa risposta");
         }
-        List<Personaggio> lista = new ArrayList<>(Arrays.asList(personaggi));
-        for (int i=0;i<lista.size();i++){
-            if (lista.get(i)==null) {
-                lista.remove(i);
-                i--;
-            }
 
-        }
-        //lista.removeIf(e -> e == null);
-        personaggi = lista.toArray(new Personaggio[0]);
 
-        //System.out.println(ChiaviGeneri);
     }
-    if (personaggi.length>0){
-        System.out.println("Il tuo personaggio è " + personaggi[0]);
+    if (MioPersonaggio==MieiPersonaggi[0]){
+        System.out.println("Il tuo personaggio è " + MieiPersonaggi[0]);
     }
     else {
         System.out.println("Il tuo personaggio non è attualmente presente nel gioco. HAI BARATO \uD83D\uDE21 \uD83D\uDE21");
