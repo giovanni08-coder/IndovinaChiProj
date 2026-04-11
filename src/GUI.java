@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 import javax.imageio.ImageIO;
 
-public class GUI extends JFrame {
+public static class GUI extends JFrame {
 
     // palette
     static final Color BG_DARK       = new Color(14, 20, 34);
@@ -480,11 +480,273 @@ public class GUI extends JFrame {
             }
         }
 
+        // GiocatoreBotS.getPersonaggiAttivi() — se rimane 1 solo attivo il bot ha trovato
+        if (giocatoreBot.getPersonaggiAttivi().size() == 1) {
+            Personaggio trovato = giocatoreBot.indovinaPersonaggio();
+            if (trovato != null) {
+                evidenzia(cardsB, trovato, elimB);
+                if (trovato.equals(segUmano)) {
+                    fine(false, "Il bot ha indovinato! \nIl tuo personaggio era: " + segUmano.getNome());
+                } else {
+                    fine(true, "Il bot ha sbagliato — hai vinto tu! \n(Il tuo era: " + segUmano.getNome() + ")");
+                }
+                return;
+            }
+        }
+
+        turnoUmano = true;
+        aggiornaTurno();
+    }
+
+    //  FINE PARTITA
+    private void evidenzia(PersonaggioCard[] cards, Personaggio trovato, boolean[] elim) {
+        for (int i = 0; i < tutti.length; i++) {
+            if (tutti[i].equals(trovato)) cards[i].setEvidenziato(true);
+            else if (!elim[i]) { elim[i] = true; cards[i].repaint(); }
+        }
+    }
+
+    private void fine(boolean umanoVince, String msg) {
+        btnSi.setEnabled(false);
+        btnNo.setEnabled(false);
+        btnFai.setEnabled(false);
+        btnIndovina.setEnabled(false);
+        new Timer(350, e -> {
+            int sc = JOptionPane.showConfirmDialog(this,
+                    msg + "\n\nVuoi giocare ancora?", "Fine partita!",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (sc == JOptionPane.YES_OPTION) schermataSetup();
+        }) {{ setRepeats(false); }}.start();
+    }
+    
+    interface Checker { boolean check(Personaggio p); }
+
+    static class DomandaGiocatore {
+        final String  testo;
+        final Checker checker;
+        DomandaGiocatore(String t, Checker c) { testo = t; checker = c; }
+        boolean check(Personaggio p) { return checker.check(p); }
+        @Override public String toString() { return testo; }
+    }
+
+    private List<DomandaGiocatore> generaDomande() {
+        List<DomandaGiocatore> l = new ArrayList<>();
+        // sesso
+        l.add(new DomandaGiocatore("È una donna?",           p -> !p.isSesso()));
+        l.add(new DomandaGiocatore("È un uomo?",             p ->  p.isSesso()));
+        // ColoriCapelli
+        l.add(new DomandaGiocatore("Ha i capelli biondi?",   p -> p.getColoreCapelli() == ColoriCapelli.BIONDI));
+        l.add(new DomandaGiocatore("Ha i capelli neri?",     p -> p.getColoreCapelli() == ColoriCapelli.NERI));
+        l.add(new DomandaGiocatore("Ha i capelli castani?",  p -> p.getColoreCapelli() == ColoriCapelli.CASTANI));
+        l.add(new DomandaGiocatore("Ha i capelli rossi?",    p -> p.getColoreCapelli() == ColoriCapelli.ROSSI));
+        l.add(new DomandaGiocatore("Ha i capelli bianchi?",  p -> p.getColoreCapelli() == ColoriCapelli.BIANCHI));
+        l.add(new DomandaGiocatore("È calvo?",               p -> p.getColoreCapelli() == ColoriCapelli.NESSUNO));
+        // ColoriOcchi
+        l.add(new DomandaGiocatore("Ha gli occhi azzurri?",  p -> p.getColoreOcchi() == ColoriOcchi.AZZURRI));
+        l.add(new DomandaGiocatore("Ha gli occhi marroni?",  p -> p.getColoreOcchi() == ColoriOcchi.MARRONI));
+        // ColorePelle
+        l.add(new DomandaGiocatore("Ha la pelle chiara?",    p -> p.getColorePelle() == ColorePelle.CHIARA));
+        l.add(new DomandaGiocatore("Ha la pelle scura?",     p -> p.getColorePelle() == ColorePelle.SCURA));
+        // accessori
+        l.add(new DomandaGiocatore("Ha gli occhiali?",       p -> p.isOcchiali()));
+        l.add(new DomandaGiocatore("Ha i baffi?",            p -> p.isBaffi()));
+        l.add(new DomandaGiocatore("Ha la barba?",           p -> p.isBarba()));
+        l.add(new DomandaGiocatore("Ha il pizzetto?",        p -> p.isPizzettto()));
+        l.add(new DomandaGiocatore("Ha gli orecchini?",      p -> p.isOrecchini()));
+        l.add(new DomandaGiocatore("Ha il cappello?",        p -> p.isCappello()));
+        return l;
+    }
+
+    private void aggiornaCombo() {
+        if (combo == null) return;
+        combo.removeAllItems();
+        for (DomandaGiocatore d : domande)
+            if (!giàFatte.contains(d.testo)) combo.addItem(d);
+    }
+
+    private void aggiornaContatore() {
+        if (lblContatore == null) return;
+        long r = rimasti(elimU).size();
+        lblContatore.setText("Tabellone: " + r + " personagg" + (r == 1 ? "io rimasto" : "i rimasti"));
+    }
+
+    private List<Personaggio> rimasti(boolean[] elim) {
+        List<Personaggio> r = new ArrayList<>();
+        for (int i = 0; i < tutti.length; i++) if (!elim[i]) r.add(tutti[i]);
+        return r;
+    }
+
+    class MiniCard extends JPanel {
+        final Personaggio p;
+        final ImagePanel imgPanel;
+        boolean hov;
+
+        MiniCard(Personaggio pg) {
+            this.p = pg;
+            setPreferredSize(new Dimension(CW, CH));
+            setOpaque(false);
+            setLayout(new BorderLayout(0, 2));
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            // TODO: ImagePanel (da inizializzare), try-catch con file,JLabel e MouseListener
+
+        }
+
+        @Override protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(hov ? new Color(32, 52, 82) : BG_CARD);
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+            g2.setColor(hov ? ACCENT_BLUE : new Color(45, 58, 85));
+            g2.setStroke(new BasicStroke(hov ? 2f : 1f));
+            g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 12, 12);
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
+
+    //  CARD TABELLONE
+    class PersonaggioCard extends JPanel {
+        final Personaggio p;
+        final int idx;
+        final boolean[] elimRef;
+        final boolean botBoard;
+        final ImagePanel imgPanel;
+        boolean evid;
+
+        PersonaggioCard(Personaggio pg, int i, boolean[] el, boolean bb) {
+            this.p       = pg;
+            this.idx     = i;
+            this.elimRef = el;
+            this.botBoard= bb;
+            setPreferredSize(new Dimension(CW, CH));
+            setOpaque(false);
+            setLayout(new BorderLayout(0, 2));
+            setToolTipText(pg.getNome());
+
+            //TODO: ImagePanel (da inizializzare), try-catch con file e ignoro dell'eccezzione, JLabel(nome, imgWrap)
+
+        }
+
+        void setEvidenziato(boolean v) { evid = v; repaint(); }
+
+        @Override protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            boolean el  = elimRef[idx];
+            int w = getWidth(), h = getHeight(), arc = 13;
+
+            // sfondo
+            g2.setColor(evid ? new Color(28, 58, 36) : BG_CARD);
+            g2.fillRoundRect(0, 0, w, h, arc, arc);
+
+            // TODO: manca bordo da fare
+
+            g2.dispose();
+            super.paintComponent(g);
+
+            if (el && !evid) {
+                Graphics2D ov = (Graphics2D) g.create();
+                ov.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                ov.setColor(botBoard ? ELIM_B : ELIM_U);
+                ov.fillRoundRect(0, 0, w, h, arc, arc);
+                ov.setColor(botBoard ? new Color(195, 50, 95) : new Color(195, 55, 55));
+                ov.setStroke(new BasicStroke(3.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                int m = 10;
+                ov.drawLine(m, m, w-m, h-m-20);
+                ov.drawLine(w-m, m, m, h-m-20);
+                ov.dispose();
+            }
+
+            if (evid) {
+                Graphics2D gv = (Graphics2D) g.create();
+                gv.setColor(ACCENT_GOLD);
+                gv.setFont(new Font("SansSerif", Font.PLAIN, 14));
+                gv.drawString("★", (w-10)/2, h - 4);
+                gv.dispose();
+            }
+        }
+    }
+
+    JButton roundBtn(String txt, Color bg, Color fg) {
+        JButton b = new JButton(txt) {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 11, 11);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        b.setFont(new Font("SansSerif", Font.BOLD, 13));
+        b.setForeground(fg);
+        b.setBackground(bg);
+        b.setOpaque(false);
+        b.setContentAreaFilled(false);
+        b.setBorderPainted(false);
+        b.setFocusPainted(false);
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        return b;
+    }
+
+    void hoverFx(JButton b, Color n, Color h) {
+        b.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { b.setBackground(h); b.repaint(); }
+            public void mouseExited (MouseEvent e) { b.setBackground(n); b.repaint(); }
+        });
+    }
+
+    JLabel sideTitle(String t, Color c) {
+        JLabel l = new JLabel(t);
+        l.setFont(new Font("SansSerif", Font.BOLD, 16));
+        l.setForeground(c);
+        l.setAlignmentX(CENTER_ALIGNMENT);
+        return l;
+    }
+
+    JLabel sideSub(String t) {
+        JLabel l = new JLabel("<html><div style='text-align:center;width:210px;'>" + t + "</div></html>");
+        l.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        l.setForeground(TEXT_MUTED);
+        l.setAlignmentX(CENTER_ALIGNMENT);
+        return l;
+    }
+
+    JLabel tiny(String t) {
+        JLabel l = new JLabel(t);
+        l.setFont(new Font("SansSerif", Font.BOLD, 11));
+        l.setForeground(TEXT_MUTED);
+        l.setAlignmentX(CENTER_ALIGNMENT);
+        return l;
+    }
+
+    Component sep() {
+        JSeparator s = new JSeparator();
+        s.setForeground(new Color(40, 50, 72));
+        s.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        return s;
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  ENTRY POINT
+    // ════════════════════════════════════════════════════════════════════════════
+    public static void avvia() {
+        SwingUtilities.invokeLater(() -> {
+            try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
+            catch (Exception ignored){}
+            new GUI().setVisible(true);
+        });
+    }
+
+    public static void main(String[] args) { avvia(); }
+}
 
 
 
 
 
 
-        public static void main(String[] args) { avvia(); }
+
+        public static void main(String[] args) { GUI.avvia(); }
 }
