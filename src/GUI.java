@@ -114,6 +114,108 @@ public class GUI extends JFrame {
         }
     }
 
+    // ════════════════════════════════════════════════════════════════════════════
+    //  CARICAMENTO DATI  (GestoreFile)
+    // ════════════════════════════════════════════════════════════════════════════
+    private void caricaDati() {
+        try {
+            albero = GestoreFile.Leggi_binarioAlbero();
+            tutti = GestoreFile.Leggi_binarioPersonaggi();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Impossibile caricare i dati!\nEsegui prima MainCaricaAlbero.\n\n" + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  SCHERMATA SETUP — scelta personaggio segreto
+    // ════════════════════════════════════════════════════════════════════════════
+    private void schermataSetup() {
+        getContentPane().removeAll();
+        setLayout(new BorderLayout());
+
+        JPanel bg = new JPanel(new BorderLayout()) {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setPaint(new GradientPaint(0, 0, new Color(10,14,26),
+                        getWidth(), getHeight(), new Color(28,12,50)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+
+        // header
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
+        header.setBorder(new EmptyBorder(28, 28, 12, 28));
+        JLabel t = new JLabel("INDOVINA CHI?");
+        t.setFont(new Font("SansSerif", Font.BOLD, 40));
+        t.setForeground(ACCENT_GOLD);
+        JLabel s = new JLabel("Clicca il tuo personaggio segreto — il bot dovrà indovinarlo!");
+        s.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        s.setForeground(TEXT_MUTED);
+        JPanel ht = new JPanel(new BorderLayout(0, 4));
+        ht.setOpaque(false);
+        ht.add(t, BorderLayout.NORTH);
+        ht.add(s, BorderLayout.SOUTH);
+        header.add(ht, BorderLayout.WEST);
+        bg.add(header, BorderLayout.NORTH);
+
+        // griglia personaggi selezionabili
+        int rows = (int) Math.ceil((double) tutti.length / COLS);
+        JPanel grid = new JPanel(new GridLayout(rows, COLS, 8, 8));
+        grid.setOpaque(false);
+        grid.setBorder(new EmptyBorder(8, 24, 24, 24));
+        for (Personaggio p : tutti) {
+            MiniCard mc = new MiniCard(p);
+            mc.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) { avviaPartita(p); }
+            });
+            grid.add(mc);
+        }
+        bg.add(grid, BorderLayout.CENTER);
+        add(bg, BorderLayout.CENTER);
+
+        pack();
+        setMinimumSize(new Dimension(980, 720));
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  AVVIO PARTITA — inizializza GiocatoreUmanoS e GiocatoreBotS
+    // ════════════════════════════════════════════════════════════════════════════
+    private void avviaPartita(Personaggio sceltaUmano) {
+        segUmano = sceltaUmano;
+        Random rand = new Random();
+        do { segBot = tutti[rand.nextInt(tutti.length)]; }
+        while (segBot.equals(segUmano));
+
+        Personaggio[] tabelloneUmano = Arrays.copyOf(tutti, tutti.length);
+        giocatoreUmano = new GiocatoreUmanoS("Giocatore", albero, tabelloneUmano);
+
+        Personaggio[] tabelloneBot = Arrays.copyOf(tutti, tutti.length);
+        giocatoreBot = new GiocatoreBotS("Bot", albero, tabelloneBot);
+
+        elimU = new boolean[tutti.length];
+        elimB= new boolean[tutti.length];
+        turnoUmano = true;
+        giàFatte= new HashSet<>();
+        domande = generaDomande();
+
+        getContentPane().removeAll();
+        buildMainUI();
+        aggiornaTurno();
+
+        pack();
+        setMinimumSize(new Dimension(1120, 730));
+        setLocationRelativeTo(null);
+        revalidate();
+        repaint();
+    }
+    
+
+
+
 
     public static void main(String[] args) { avvia(); }
 }
