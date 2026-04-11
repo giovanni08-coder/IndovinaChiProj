@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 import javax.imageio.ImageIO;
 
-public static class GUI extends JFrame {
+public class GUI extends JFrame {
 
     // palette
     static final Color BG_DARK       = new Color(14, 20, 34);
@@ -518,7 +518,7 @@ public static class GUI extends JFrame {
             if (sc == JOptionPane.YES_OPTION) schermataSetup();
         }) {{ setRepeats(false); }}.start();
     }
-    
+
     interface Checker { boolean check(Personaggio p); }
 
     static class DomandaGiocatore {
@@ -744,9 +744,3 @@ public static class GUI extends JFrame {
 
 
 
-
-
-
-
-        public static void main(String[] args) { GUI.avvia(); }
-}
