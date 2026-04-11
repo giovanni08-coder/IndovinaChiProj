@@ -16,7 +16,7 @@ public abstract class Giocatore {
         boolean trovato;
         Nodo nodo = albero.getNodo(albero.getRoot(),null, domanda);
         ArrayList<Personaggio> personerimaste;
-        if (risposta=="si"){
+        if (risposta.equals("si")){
             personerimaste = albero.getPersoneRimaste(nodo.getNododx());
         }
         else {
