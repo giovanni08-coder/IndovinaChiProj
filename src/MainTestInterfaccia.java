@@ -123,10 +123,3 @@ void main() throws Exception {
         pannello.mostraRisultato(false, MioPersonaggio, MieiPersonaggi[0]);
     }
 }
-//try {
-//            MainDinamico frame = new MainDinamico();
-//            frame.setVisible(true);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
