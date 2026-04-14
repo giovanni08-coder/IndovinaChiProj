@@ -55,10 +55,9 @@ Personaggio[] VerificaRisposta(Personaggio MiopersonaggioRandom,Personaggio[] Mi
 
     }
     if (!lista.contains(MiopersonaggioRandom)){
-        throw new IllegalArgumentException("HAI MENTITO, BUGIARDO, DAMMMI LA RISPOSTA GIUSTA");
+        throw new IllegalArgumentException("HAI MENTITO");
     }
     else {
-        //lista.removeIf(e -> e == null);
         MieiPersonaggi = lista.toArray(new Personaggio[0]);
         if (scelta.equals("si")){
             MieiGeneriDomande.remove(GenereRandom);
@@ -78,8 +77,9 @@ void main() throws Exception {
     Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomande = GestoreFile.Leggi_binarioDomande();
     Random r = new Random();
     Personaggio[] MieiPersonaggi = GestoreFile.Leggi_binarioPersonaggi();
-    Personaggio MioPersonaggio = MieiPersonaggi[r.nextInt(MieiPersonaggi.length)];
-
+    Pannello pannello = new Pannello(MieiPersonaggi);
+    System.out.println("Scegli il tuo personaggio dalla finestra");
+    Personaggio MioPersonaggio = pannello.aspettaScelta();
     //Personaggio[] PersonaggiBot = GestoreFile.Leggi_binarioPersonaggi();
     //Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomandeBot = GestoreFile.Leggi_binarioDomande();
 
@@ -87,34 +87,39 @@ void main() throws Exception {
 
     while (MieiPersonaggi.length > 1) {
         boolean errore = true;
-        EliminazioneDomandeInutili(MieiGeneriDomande,MieiPersonaggi);
+        EliminazioneDomandeInutili(MieiGeneriDomande, MieiPersonaggi);
         System.out.println(Arrays.asList(MieiPersonaggi));
         System.out.println(MieiGeneriDomande.keySet());
         List<String> ChiaviGeneri = new ArrayList<>(MieiGeneriDomande.keySet());
         String GenereRandom = ChiaviGeneri.get(r.nextInt(ChiaviGeneri.size()));
         List<String> ChiaviDomande = new ArrayList<>(MieiGeneriDomande.get(GenereRandom).keySet());
-
-
         String DomandaRandom = ChiaviDomande.get(r.nextInt(ChiaviDomande.size()));
 
-        String scelta = IO.readln(DomandaRandom);
+
+        String scelta = pannello.aspettaRisposta(DomandaRandom);
         scelta = scelta.toLowerCase();
         while (errore) {
             try {
                 MieiPersonaggi = VerificaRisposta(MioPersonaggio, MieiPersonaggi, scelta, GenereRandom, DomandaRandom, MieiGeneriDomande);
-                errore=false;
+                ArrayList<Personaggio> eliminati = new ArrayList<>();
+                for (Personaggio p : MieiPersonaggi) {
+                    boolean trovato = false;
+                    for (Personaggio nuovo : MieiPersonaggi) {
+                        if (p.equals(nuovo)) trovato = true;
+                    }
+                    if (!trovato) eliminati.add(p);
+                }
+                pannello.eliminaPersonaggi(eliminati);
+                errore = false;
             } catch (Exception e) {
                 System.out.println("HAI MENTITO, DIMMI LA VERITAAAAAAAA");
-                scelta= IO.readln("RIPROVA, E RISPONDI BENE: ");
+                scelta = pannello.aspettaRisposta("RIPROVA, E RISPONDI BENE: ");
             }
         }
-
-
     }
-    if (MioPersonaggio==MieiPersonaggi[0]){
-        System.out.println("Il tuo personaggio è " + MieiPersonaggi[0]);
-    }
-    else {
-        System.out.println("Il tuo personaggio non è attualmente presente nel gioco. HAI BARATO \uD83D\uDE21 \uD83D\uDE21");
+    if (MioPersonaggio == MieiPersonaggi[0]) {
+        pannello.mostraRisultato(true, MioPersonaggio, MieiPersonaggi[0]);
+    } else {
+        pannello.mostraRisultato(false, MioPersonaggio, MieiPersonaggi[0]);
     }
 }
