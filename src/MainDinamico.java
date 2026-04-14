@@ -1,67 +1,4 @@
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.List;
-
-public class MainDinamico extends JFrame {
-
-    static final Color BG_DARK = new Color(14, 20, 34);
-    static final Color BG_CARD = new Color(28, 36, 54);
-    static final Color ACCENT_BLUE = new Color(70, 150, 255);
-    static final Color TEXT_WHITE = new Color(238, 240, 250);
-
-    private Personaggio[] tutti;
-    private boolean[] elimU;
-    private JPanel tabU;
-
-    public MainDinamico() {
-        super("Indovina Chi!");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1000, 700);
-        setLocationRelativeTo(null);
-        getContentPane().setBackground(BG_DARK);
-
-        caricaDati();
-        buildUI();
-    }
-
-    private void caricaDati() {
-        try {
-            tutti = GestoreFile.Leggi_binarioPersonaggi();
-            elimU = new boolean[tutti.length];
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Errore caricamento dati");
-            System.exit(1);
-        }
-    }
-
-    private void buildUI() {
-        setLayout(new BorderLayout());
-
-        tabU = new JPanel(new GridLayout(0, 6, 8, 8));
-        tabU.setBorder(new EmptyBorder(20, 20, 20, 20));
-        tabU.setBackground(BG_DARK);
-
-        for (int i = 0; i < tutti.length; i++) {
-            int index = i;
-            JButton btn = new JButton(tutti[i].getNome());
-            btn.setBackground(BG_CARD);
-            btn.setForeground(TEXT_WHITE);
-
-            btn.addActionListener(e -> {
-                elimU[index] = !elimU[index];
-                btn.setEnabled(!elimU[index]);
-            });
-
-            tabU.add(btn);
-        }
-
-        add(new JScrollPane(tabU), BorderLayout.CENTER);
-    }
-
-    void EliminazioneDomandeInutili(Map<String, Map<String, ArrayList<Personaggio>>> GeneriDomande,Personaggio[] personaggi){
+void EliminazioneDomandeInutili(Map<String, Map<String, ArrayList<Personaggio>>> GeneriDomande,Personaggio[] personaggi){
         int conta;
         boolean caratteristicaPresente;
         for (String genere : new ArrayList<>(GeneriDomande.keySet())) {
@@ -91,7 +28,6 @@ public class MainDinamico extends JFrame {
                 GeneriDomande.remove(genere);
         }
     }
-
     Personaggio[] VerificaRisposta(Personaggio MiopersonaggioRandom,Personaggio[] MieiPersonaggi,String scelta,String GenereRandom,String DomandaRandom,Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomande){
         Personaggio[] CopiaMieiPersonaggi = MieiPersonaggi.clone();
         if (scelta.equals("si")) {
@@ -137,13 +73,49 @@ public class MainDinamico extends JFrame {
         }
         return MieiPersonaggi;
     }
+    void main() throws Exception {
+        Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomande = GestoreFile.Leggi_binarioDomande();
+        Random r = new Random();
+        Personaggio[] MieiPersonaggi = GestoreFile.Leggi_binarioPersonaggi();
+        Personaggio MioPersonaggio = MieiPersonaggi[r.nextInt(MieiPersonaggi.length)];
+        //Personaggio[] PersonaggiBot = GestoreFile.Leggi_binarioPersonaggi();
+        //Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomandeBot = GestoreFile.Leggi_binarioDomande();
 
-    public static void main(String[] args) {
-        try {
-            MainDinamico frame = new MainDinamico();
-            frame.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
+        System.out.println("Il tuo personaggio è: " + MioPersonaggio);
+
+        while (MieiPersonaggi.length > 1) {
+            boolean errore = true;
+            EliminazioneDomandeInutili(MieiGeneriDomande, MieiPersonaggi);
+            System.out.println(Arrays.asList(MieiPersonaggi));
+            System.out.println(MieiGeneriDomande.keySet());
+            List<String> ChiaviGeneri = new ArrayList<>(MieiGeneriDomande.keySet());
+            String GenereRandom = ChiaviGeneri.get(r.nextInt(ChiaviGeneri.size()));
+            List<String> ChiaviDomande = new ArrayList<>(MieiGeneriDomande.get(GenereRandom).keySet());
+            String DomandaRandom = ChiaviDomande.get(r.nextInt(ChiaviDomande.size()));
+
+
+            String scelta = IO.readln(DomandaRandom);
+            scelta = scelta.toLowerCase();
+            while (errore) {
+                try {
+                    MieiPersonaggi = VerificaRisposta(MioPersonaggio, MieiPersonaggi, scelta, GenereRandom, DomandaRandom, MieiGeneriDomande);
+                    errore = false;
+                } catch (Exception e) {
+                    System.out.println("HAI MENTITO, DIMMI LA VERITAAAAAAAA");
+                    scelta = IO.readln("RIPROVA, E RISPONDI BENE: ");
+                }
+            }
         }
-    }
+        if (MioPersonaggio == MieiPersonaggi[0]) {
+            System.out.println("Il tuo personaggio è " + MieiPersonaggi[0]);
+        } else {
+            System.out.println("Il tuo personaggio non è attualmente presente nel gioco. HAI BARATO \uD83D\uDE21 \uD83D\uDE21");
+        }
 }
+//try {
+//            MainDinamico frame = new MainDinamico();
+//            frame.setVisible(true);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
