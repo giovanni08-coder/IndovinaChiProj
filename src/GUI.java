@@ -589,6 +589,7 @@ public class GUI extends JFrame {
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
             // TODO: ImagePanel (da inizializzare), try-catch con file,JLabel e MouseListener
+            imgPanel=null;
 
         }
 
@@ -626,6 +627,7 @@ public class GUI extends JFrame {
 
             //TODO: ImagePanel (da inizializzare), try-catch con file e ignoro dell'eccezzione, JLabel(nome, imgWrap)
 
+            imgPanel = null;
         }
 
         void setEvidenziato(boolean v) { evid = v; repaint(); }

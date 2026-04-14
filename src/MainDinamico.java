@@ -80,8 +80,8 @@ void main() throws Exception {
     Personaggio[] MieiPersonaggi = GestoreFile.Leggi_binarioPersonaggi();
     Personaggio MioPersonaggio = MieiPersonaggi[r.nextInt(MieiPersonaggi.length)];
 
-    //Personaggio[] PersonaggiBot = GestoreFile.Leggi_binarioPersonaggi();
-    //Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomandeBot = GestoreFile.Leggi_binarioDomande();
+    Personaggio[] PersonaggiBot = GestoreFile.Leggi_binarioPersonaggi();
+    Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomandeBot = GestoreFile.Leggi_binarioDomande();
 
     System.out.println("Il tuo personaggio è: " + MioPersonaggio);
 
