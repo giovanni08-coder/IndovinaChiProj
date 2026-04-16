@@ -83,6 +83,7 @@ Personaggio[] VerificaRispostaBot(Personaggio MiopersonaggioRandom,Personaggio[]
                 CopiaMieiPersonaggi[i] = null;
             }
         }
+        System.out.println("si");
         si = true;
     }
     else if (!(MieiGeneriDomande.get(GenereRandom).get(DomandaRandom).contains(MiopersonaggioRandom))) {
@@ -91,6 +92,7 @@ Personaggio[] VerificaRispostaBot(Personaggio MiopersonaggioRandom,Personaggio[]
                 CopiaMieiPersonaggi[i] = null;
             }
         }
+        System.out.println("no");
         si=false;
     } else {
         throw new IllegalArgumentException("Il tuo personaggio non esiste");
@@ -134,45 +136,46 @@ String TrovaGenere(Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDo
 }
 
 void main() throws Exception {
-    Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomande = GestoreFile.Leggi_binarioDomande();
+    //Map<String, Map<String, ArrayList<Personaggio>>> MieiGeneriDomande = GestoreFile.Leggi_binarioDomande();
     Random r = new Random();
-    Personaggio[] MieiPersonaggi = GestoreFile.Leggi_binarioPersonaggi();
-    Personaggio MioPersonaggio = MieiPersonaggi[r.nextInt(MieiPersonaggi.length)];
+    //Personaggio[] MieiPersonaggi = GestoreFile.Leggi_binarioPersonaggi();
+    //Personaggio MioPersonaggio = MieiPersonaggi[r.nextInt(MieiPersonaggi.length)];
 
     int sceltaGiocatore = 0;
     Personaggio[] PersonaggiBot = GestoreFile.Leggi_binarioPersonaggi();
     Map<String, Map<String, ArrayList<Personaggio>>> GeneriDomandeBot = GestoreFile.Leggi_binarioDomande();
     Personaggio PersonaggioRandomBot = PersonaggiBot[r.nextInt(PersonaggiBot.length)];
 
-    System.out.println("Il tuo personaggio è: " + MioPersonaggio);
-
-    while (MieiPersonaggi.length > 1 && PersonaggiBot.length>1) {
+    //System.out.println("Il tuo personaggio è: " + MioPersonaggio);
+//MieiPersonaggi.length > 1 &&
+    while (PersonaggiBot.length>1) {
         boolean errore = true;
-        EliminazioneDomandeInutili(MieiGeneriDomande, MieiPersonaggi);
+        //EliminazioneDomandeInutili(MieiGeneriDomande, MieiPersonaggi);
         EliminazioneDomandeInutili(GeneriDomandeBot,PersonaggiBot);
         //Stampa Personaggi
-        System.out.println(Arrays.asList(MieiPersonaggi));
+        //System.out.println(Arrays.asList(MieiPersonaggi));
         //Stampa generi domande
-        System.out.println(MieiGeneriDomande.keySet());
+        //System.out.println(MieiGeneriDomande.keySet());
 
         //Generi Domande  che può fare il bot al giocatore
-        List<String> ChiaviGeneri = new ArrayList<>(MieiGeneriDomande.keySet());
-        String GenereRandom = ChiaviGeneri.get(r.nextInt(ChiaviGeneri.size()));
+        //List<String> ChiaviGeneri = new ArrayList<>(MieiGeneriDomande.keySet());
+        //String GenereRandom = ChiaviGeneri.get(r.nextInt(ChiaviGeneri.size()));
 
         //Domande che può fare il bot al giocatore
-        List<String> ChiaviDomande = new ArrayList<>(MieiGeneriDomande.get(GenereRandom).keySet());
-        String DomandaRandom = ChiaviDomande.get(r.nextInt(ChiaviDomande.size()));
+        //List<String> ChiaviDomande = new ArrayList<>(MieiGeneriDomande.get(GenereRandom).keySet());
+        //String DomandaRandom = ChiaviDomande.get(r.nextInt(ChiaviDomande.size()));
 
         //Generi Domande  che può fare il giocatore al bot
         List<String> ChiaviGeneriBot = new ArrayList<>(GeneriDomandeBot.keySet());
         List<String> GeneriRandomBot = new ArrayList<>();
         String GenereRandomBot;
-        while (GeneriRandomBot.size()<4) {
-            List<String> CopiaGeneri = new ArrayList<>(ChiaviGeneriBot);
+        List<String> CopiaGeneri = new ArrayList<>(ChiaviGeneriBot);
+        System.out.println(CopiaGeneri);
+        while (GeneriRandomBot.size()<4 && (!CopiaGeneri.isEmpty())) {
             GenereRandomBot = CopiaGeneri.get(r.nextInt(CopiaGeneri.size()));
             GeneriRandomBot.add(GenereRandomBot);
-            CopiaGeneri.remove(GenereRandom);
-        }
+            CopiaGeneri.remove(GenereRandomBot);
+        };
         //Domande che può fare il giocatore al bot
         List<String> DomandeBot = new ArrayList<>();
         for (int i=0; i<GeneriRandomBot.size();i++){
@@ -181,21 +184,22 @@ void main() throws Exception {
         }
 
 
-        String scelta = IO.readln(DomandaRandom);
-        scelta = scelta.toLowerCase();
+        //String scelta = IO.readln(DomandaRandom);
+        //scelta = scelta.toLowerCase();
 
 
-        while (errore) {
-            try {
-                MieiPersonaggi = VerificaRisposta(MioPersonaggio, MieiPersonaggi, scelta, GenereRandom, DomandaRandom, MieiGeneriDomande);
-                errore = false;
-            } catch (Exception e) {
-                System.out.println("HAI MENTITO, DIMMI LA VERITAAAAAAAA");
-                scelta = IO.readln("RIPROVA, E RISPONDI BENE: ");
-            }
-        }
+        //while (errore) {
+            //try {
+                //MieiPersonaggi = VerificaRisposta(MioPersonaggio, MieiPersonaggi, scelta, GenereRandom, DomandaRandom, MieiGeneriDomande);
+                //errore = false;
+            //} catch (Exception e) {
+              //  System.out.println("HAI MENTITO, DIMMI LA VERITAAAAAAAA");
+                //scelta = IO.readln("RIPROVA, E RISPONDI BENE: ");
+            //}
+        //}
+        System.out.println(ChiaviGeneriBot);
             System.out.println(DomandeBot);
-            errore=true;
+            //errore=true;
             while (errore) {
                 try {
                     sceltaGiocatore = Integer.parseInt(IO.readln("Di queste domande:" + DomandeBot + " quale vuoi fare all'altro giocatore (dai 1...n): "));
@@ -207,17 +211,20 @@ void main() throws Exception {
                     System.out.println("Non screvere corbellerie scegli la domanda che vuoi fare pls ");
                 }
             }
-            errore=true;
             PersonaggiBot = VerificaRispostaBot(PersonaggioRandomBot,PersonaggiBot,TrovaGenere(GeneriDomandeBot,DomandeBot.get(sceltaGiocatore-1)),DomandeBot.get(sceltaGiocatore-1),GeneriDomandeBot);
 
+            if (PersonaggiBot.length<=3){
+                String IndovinaPersonaggio = IO.readln("Indovina il nome di un personaggio");
+                for (int i=0;)
+            }
 
         System.out.println(Arrays.asList(PersonaggiBot) + "\n");
 
         }
-    if (MioPersonaggio==MieiPersonaggi[0]){
-        System.out.println("Il tuo personaggio è " + MieiPersonaggi[0]);
-    }
-    else {
-        System.out.println("Il tuo personaggio non è attualmente presente nel gioco. HAI BARATO \uD83D\uDE21 \uD83D\uDE21");
-    }
+    //if (MioPersonaggio==MieiPersonaggi[0]){
+      //  System.out.println("Il tuo personaggio è " + MieiPersonaggi[0]);
+    //}
+    //else {
+      //  System.out.println("Il tuo personaggio non è attualmente presente nel gioco. HAI BARATO \uD83D\uDE21 \uD83D\uDE21");
+    //}
 }
