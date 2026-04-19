@@ -133,7 +133,7 @@ int gioca() throws Exception {
     Map<String, Map<String, ArrayList<Personaggio>>> GeneriDomandeBot = GestoreFile.Leggi_binarioDomande();
     Personaggio PersonaggioRandomBot = PersonaggiBot[r.nextInt(PersonaggiBot.length)];
 
-    Pannello pannello = new Pannello(MieiPersonaggi);
+    Pannello pannello = new Pannello(MieiPersonaggi, PersonaggiBot);
     System.out.println("Scegli il tuo personaggio dalla finestra");
     Personaggio MioPersonaggio = pannello.aspettaScelta();
     System.out.println("Il tuo personaggio è: " + MioPersonaggio);
@@ -189,6 +189,7 @@ int gioca() throws Exception {
 
         int sceltaGiocatore = pannello.aspettaSceltaDomanda(DomandeBot);
         PersonaggiBot = VerificaRispostaBot(PersonaggioRandomBot, PersonaggiBot, TrovaGenere(GeneriDomandeBot, DomandeBot.get(sceltaGiocatore - 1)), DomandeBot.get(sceltaGiocatore - 1), GeneriDomandeBot);
+        pannello.aggiornaPersonaggiBot(PersonaggiBot);
 
         if (PersonaggiBot.length <= 6 && PersonaggiBot.length > 1) {
             System.out.println(Arrays.asList(PersonaggiBot));

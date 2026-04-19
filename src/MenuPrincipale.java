@@ -7,8 +7,7 @@ public class MenuPrincipale extends JFrame {
 
     public static final int SCELTA_GIOCA   = 1;
     public static final int SCELTA_REGOLE  = 2;
-    public static final int SCELTA_CREDITI = 3;
-    public static final int SCELTA_ESCI    = 4;
+    public static final int SCELTA_ESCI    = 3;
 
     private int scelta = -1;
 
@@ -65,14 +64,11 @@ public class MenuPrincipale extends JFrame {
 
         JButton btnGioca = creaBottone("▶   GIOCA",   COL_ACCENT,  COL_BG);
         JButton btnRegole = creaBottone("📖  REGOLE",  COL_CARD,    COL_TEXT);
-        JButton btnCrediti = creaBottone("★   CREDITI", COL_CARD,    COL_TEXT);
         JButton btnEsci = creaBottone("✕   ESCI",    COL_ACCENT2, COL_BG);
 
         btnGioca.addActionListener(e -> { scelta = SCELTA_GIOCA; });
 
         btnRegole.addActionListener(e -> mostraRegole());
-
-        btnCrediti.addActionListener(e -> mostraCrediti());
 
         btnEsci.addActionListener(e -> {
             scelta = SCELTA_ESCI;
@@ -89,8 +85,6 @@ public class MenuPrincipale extends JFrame {
         root.add(btnGioca);
         root.add(Box.createVerticalStrut(14));
         root.add(btnRegole);
-        root.add(Box.createVerticalStrut(14));
-        root.add(btnCrediti);
         root.add(Box.createVerticalStrut(14));
         root.add(btnEsci);
 
@@ -118,13 +112,6 @@ public class MenuPrincipale extends JFrame {
 
         JLabel lbl = new JLabel(testo);
         JOptionPane.showMessageDialog(this, lbl, "Regole", JOptionPane.PLAIN_MESSAGE);
-    }
-
-    private void mostraCrediti() {
-        String testo = "<html><body style='font-family:Serif; width:300px; color:#1a0a2e; text-align:center;'>" + "<h2 style='color:#b8860b;'>★ Crediti</h2>" + "<p><b>Indovina Chi — Versione digitale</b></p><br>" + "<p>Sviluppato come progetto scolastico</p><br>" + "<p style='color:#555;'>Grafica e logica di gioco:<br><b>Il tuo nome qui</b></p><br>" + "<p style='color:#888; font-style:italic;'>Ispirato al classico gioco da tavolo<br>" + "\"Guess Who?\" di Milton Bradley</p>" + "</body></html>";
-
-        JLabel lbl = new JLabel(testo);
-        JOptionPane.showMessageDialog(this, lbl, "Crediti", JOptionPane.PLAIN_MESSAGE);
     }
 
     private JButton creaBottone(String testo, Color sfondo, Color testoCols) {
@@ -165,4 +152,3 @@ public class MenuPrincipale extends JFrame {
         return btn;
     }
 }
-

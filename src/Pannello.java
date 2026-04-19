@@ -7,18 +7,24 @@ import javax.swing.border.EmptyBorder;
 public class Pannello extends JFrame {
 
     public static final int RISULTATO_NUOVA_PARTITA = 1;
-    public static final int RISULTATO_ESCI          = 2;
+    public static final int RISULTATO_ESCI = 2;
 
     private static final Color COL_BG = new Color(15, 12, 41);
     private static final Color COL_PANEL = new Color(26, 22, 65);
-    private static final Color COL_ACCENT = new Color(255, 214, 0);
+    private static final Color COL_ACCENT= new Color(255, 214, 0);
     private static final Color COL_ACCENT2 = new Color(255, 100, 80);
     private static final Color COL_TEXT = new Color(240, 235, 255);
     private static final Color COL_SUBTEXT = new Color(160, 150, 200);
+    private static final Color COL_BOT_BG = new Color(10, 8, 30);
 
     private Personaggio[] personaggi;
     private JButton[] bottoni;
-    private boolean faseScelta       = true;
+
+    private Personaggio[] personaggiBot;
+    private JButton[] bottoniBot;
+    private JLabel lblContatoreBot;
+
+    private boolean faseScelta = true;
     private JLabel lblDomanda;
     private JButton btnSi, btnNo;
 
@@ -28,12 +34,14 @@ public class Pannello extends JFrame {
     private String sceltaNome = null;
     private int sceltaFinePartita = -1;
 
-    public Pannello(Personaggio[] personaggi) {
+    public Pannello(Personaggio[] personaggi, Personaggio[] personaggiBot) {
         this.personaggi = personaggi;
-        this.bottoni    = new JButton[personaggi.length];
+        this.bottoni = new JButton[personaggi.length];
+        this.personaggiBot = personaggiBot;
+        this.bottoniBot = new JButton[personaggiBot.length];
 
         setTitle("Indovina Chi — Partita");
-        setSize(960, 720);
+        setSize(1400, 760);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -42,16 +50,46 @@ public class Pannello extends JFrame {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(COL_PANEL);
         header.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, COL_ACCENT), new EmptyBorder(14, 24, 14, 24)));
-
         lblDomanda = new JLabel("Scegli il tuo personaggio", SwingConstants.CENTER);
         lblDomanda.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 20));
         lblDomanda.setForeground(COL_ACCENT);
         header.add(lblDomanda, BorderLayout.CENTER);
         add(header, BorderLayout.NORTH);
 
-        JPanel grid = new JPanel(new GridLayout(0, 6, 8, 8));
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, creaTabelloneGiocatore(), creaTabelloneBot());
+        split.setDividerLocation(700);
+        split.setDividerSize(6);
+        split.setBackground(COL_BG);
+        split.setBorder(null);
+        add(split, BorderLayout.CENTER);
+
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 12));
+        footer.setBackground(COL_PANEL);
+        footer.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, new Color(60, 50, 100)));
+        btnSi = creaBottoneRisposta("SÌ", new Color(40, 160, 90));
+        btnNo = creaBottoneRisposta("NO", COL_ACCENT2);
+        btnSi.addActionListener(e -> risposta = "si");
+        btnNo.addActionListener(e -> risposta = "no");
+        footer.add(btnSi);
+        footer.add(btnNo);
+        add(footer, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    private JPanel creaTabelloneGiocatore() {
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setBackground(COL_BG);
+
+        JLabel lbl = new JLabel("I TUOI PERSONAGGI", SwingConstants.CENTER);
+        lbl.setFont(new Font("Serif", Font.BOLD, 13));
+        lbl.setForeground(COL_ACCENT);
+        lbl.setBorder(new EmptyBorder(8, 8, 6, 8));
+        wrapper.add(lbl, BorderLayout.NORTH);
+
+        JPanel grid = new JPanel(new GridLayout(0, 4, 6, 6));
         grid.setBackground(COL_BG);
-        grid.setBorder(new EmptyBorder(14, 14, 14, 14));
+        grid.setBorder(new EmptyBorder(8, 10, 8, 6));
 
         for (int i = 0; i < personaggi.length; i++) {
             JButton b = new JButton();
@@ -60,7 +98,6 @@ public class Pannello extends JFrame {
             b.setFocusPainted(false);
             bottoni[i] = b;
             setImmagineNormale(i);
-
             final int idx = i;
             b.addActionListener(e -> {
                 if (faseScelta) {
@@ -70,26 +107,70 @@ public class Pannello extends JFrame {
             });
             grid.add(b);
         }
-        add(new JScrollPane(grid), BorderLayout.CENTER);
 
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 12));
-        footer.setBackground(COL_PANEL);
-        footer.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, new Color(60, 50, 100)));
+        JScrollPane sp = new JScrollPane(grid);
+        sp.setBorder(null);
+        sp.getViewport().setBackground(COL_BG);
+        wrapper.add(sp, BorderLayout.CENTER);
+        return wrapper;
+    }
 
-        btnSi = creaBottoneRisposta("SÌ",  new Color(40, 160, 90));
-        btnNo = creaBottoneRisposta("NO",  COL_ACCENT2);
-        btnSi.addActionListener(e -> risposta = "si");
-        btnNo.addActionListener(e -> risposta = "no");
+    private JPanel creaTabelloneBot() {
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setBackground(COL_BOT_BG);
 
-        footer.add(btnSi);
-        footer.add(btnNo);
-        add(footer, BorderLayout.SOUTH);
+        JPanel intestazione = new JPanel(new BorderLayout());
+        intestazione.setBackground(COL_BOT_BG);
+        intestazione.setBorder(new EmptyBorder(8, 8, 6, 8));
 
-        setVisible(true);
+        JLabel lbl = new JLabel("PERSONAGGI DEL BOT", SwingConstants.CENTER);
+        lbl.setFont(new Font("Serif", Font.BOLD, 13));
+        lbl.setForeground(COL_ACCENT2);
+        intestazione.add(lbl, BorderLayout.CENTER);
+
+        lblContatoreBot = new JLabel("Rimasti: " + personaggiBot.length, SwingConstants.RIGHT);
+        lblContatoreBot.setFont(new Font("Serif", Font.ITALIC, 12));
+        lblContatoreBot.setForeground(COL_SUBTEXT);
+        intestazione.add(lblContatoreBot, BorderLayout.EAST);
+
+        wrapper.add(intestazione, BorderLayout.NORTH);
+
+        JPanel grid = new JPanel(new GridLayout(0, 4, 6, 6));
+        grid.setBackground(COL_BOT_BG);
+        grid.setBorder(new EmptyBorder(8, 6, 8, 10));
+
+        for (int i = 0; i < personaggiBot.length; i++) {
+            JButton b = new JButton() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    g.setColor(getBackground());
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                    Icon ic = getIcon();
+                    if (ic != null) {
+                        int x = (getWidth()  - ic.getIconWidth())  / 2;
+                        int y = (getHeight() - ic.getIconHeight()) / 2;
+                        ic.paintIcon(this, g, x, y);
+                    }
+                }
+            };
+            b.setBackground(new Color(35, 28, 80));
+            b.setBorder(BorderFactory.createLineBorder(new Color(80, 40, 40), 1));
+            b.setFocusPainted(false);
+            b.setEnabled(false);   // solo visivo, non cliccabile
+            bottoniBot[i] = b;
+            setImmagineBotNormale(i);
+            grid.add(b);
+        }
+
+        JScrollPane sp = new JScrollPane(grid);
+        sp.setBorder(null);
+        sp.getViewport().setBackground(COL_BOT_BG);
+        wrapper.add(sp, BorderLayout.CENTER);
+        return wrapper;
     }
 
     public Personaggio aspettaScelta() {
-        lblDomanda.setText("SCEGLI IL TUO PERSONAGGIO");
+        lblDomanda.setText("SCEGLI IL TUO PERSONAGGIO SEGRETO");
         while (scelto == null) sleep();
         faseScelta = false;
         return scelto;
@@ -102,6 +183,34 @@ public class Pannello extends JFrame {
         risposta = null;
         while (risposta == null) sleep();
         return risposta;
+    }
+
+    public void eliminaPersonaggi(ArrayList<Personaggio> daEliminare) {
+        for (int i = 0; i < personaggi.length; i++) {
+            if (daEliminare.contains(personaggi[i])) {
+                setImmagineSbarrata(i);
+            }
+        }
+    }
+
+    public void aggiornaPersonaggiBot(Personaggio[] candidatiRimasti) {
+        int rimasti = 0;
+        for (int i = 0; i < personaggiBot.length; i++) {
+            boolean ancora = false;
+            for (Personaggio c : candidatiRimasti) {
+                if (personaggiBot[i].equals(c)) {
+                    ancora = true;
+                }
+            }
+            if (ancora) {
+                rimasti++;
+                setImmagineBotNormale(i);
+            } else {
+                setImmagineBotSbarrata(i);
+            }
+        }
+        lblContatoreBot.setText("Rimasti: " + rimasti);
+        lblContatoreBot.repaint();
     }
 
     public int aspettaSceltaDomanda(List<String> domande) {
@@ -171,14 +280,6 @@ public class Pannello extends JFrame {
         return sceltaNome;
     }
 
-    public void eliminaPersonaggi(ArrayList<Personaggio> daEliminare) {
-        for (int i = 0; i < personaggi.length; i++) {
-            if (daEliminare.contains(personaggi[i])) {
-                setImmagineSbarrata(i);
-            }
-        }
-    }
-
     public int mostraRisultato(boolean indovinato, Personaggio mioPersonaggio, Personaggio personaggioBot) {
         sceltaFinePartita = -1;
         btnSi.setEnabled(false);
@@ -195,9 +296,12 @@ public class Pannello extends JFrame {
         dialog.setLayout(new BorderLayout());
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
-        JLabel lblTitolo = new JLabel(
-                indovinato ? "🏆  HAI VINTO!" : "💀  HAI PERSO!",
-                SwingConstants.CENTER);
+        JLabel lblTitolo;
+        if (indovinato) {
+            lblTitolo = new JLabel("🏆  HAI VINTO!", SwingConstants.CENTER);
+        } else {
+            lblTitolo = new JLabel("💀  HAI PERSO!", SwingConstants.CENTER);
+        }
         lblTitolo.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 30));
         lblTitolo.setForeground(indovinato ? COL_ACCENT : COL_ACCENT2);
         lblTitolo.setBorder(new EmptyBorder(24, 20, 8, 20));
@@ -220,9 +324,9 @@ public class Pannello extends JFrame {
 
         String msg;
         if (indovinato) {
-            msg = String.format("Il personaggio del bot era <b>%s</b>.<br>Complimenti!", personaggioBot.getNome());
+            msg = "Il personaggio del bot era <b>" + personaggioBot.getNome() + "</b>.<br>Complimenti!";
         } else {
-            msg = String.format("Il bot ha indovinato che eri <b>%s</b>.<br>Ritenta!", mioPersonaggio.getNome());
+            msg = "Il bot ha indovinato che eri <b>" + mioPersonaggio.getNome() + "</b>.<br>Ritenta!";
         }
         JLabel lblMsg = new JLabel("<html><div style='text-align:center;font-family:Serif;font-size:13px;color:#d0c8f0;'>" + msg + "</div></html>", SwingConstants.CENTER);
         lblMsg.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -241,7 +345,6 @@ public class Pannello extends JFrame {
         lblScelta.setAlignmentX(Component.CENTER_ALIGNMENT);
         corpo.add(lblScelta);
         corpo.add(Box.createVerticalStrut(14));
-
         JButton btnNuova = creaBottoneDialog("▶   NUOVA PARTITA");
         btnNuova.setForeground(COL_BG);
         btnNuova.setBackground(COL_ACCENT);
@@ -252,7 +355,6 @@ public class Pannello extends JFrame {
         btnEsci.setForeground(Color.WHITE);
         btnEsci.setBackground(COL_ACCENT2);
         btnEsci.addActionListener(e -> { sceltaFinePartita = RISULTATO_ESCI; dialog.dispose(); });
-
         corpo.add(btnEsci);
         corpo.add(Box.createVerticalStrut(16));
         dialog.add(corpo, BorderLayout.CENTER);
@@ -270,8 +372,17 @@ public class Pannello extends JFrame {
     }
 
     private void setImmagineSbarrata(int i) {
-        String sbarrato = personaggi[i].getUrl().replace("Giocatori", "Sbarrati");
-        bottoni[i].setIcon(new ImageIcon(sbarrato));
+        bottoni[i].setIcon(new ImageIcon(personaggi[i].getUrl().replace("Giocatori", "Sbarrati")));
+    }
+
+    private void setImmagineBotNormale(int i) {
+        bottoniBot[i].setIcon(new ImageIcon(personaggiBot[i].getUrl()));
+        bottoniBot[i].setToolTipText(personaggiBot[i].getNome());
+    }
+
+    private void setImmagineBotSbarrata(int i) {
+        bottoniBot[i].setIcon(new ImageIcon(personaggiBot[i].getUrl().replace("Giocatori", "Sbarrati")));
+        bottoniBot[i].setToolTipText(personaggiBot[i].getNome() + " (eliminato)");
     }
 
     private JButton creaBottoneRisposta(String testo, Color colore) {
