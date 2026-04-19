@@ -7,7 +7,6 @@ public class MenuPrincipale extends JFrame {
 
     public static final int SCELTA_GIOCA   = 1;
     public static final int SCELTA_REGOLE  = 2;
-    public static final int SCELTA_CREDITI = 3;
     public static final int SCELTA_ESCI    = 4;
 
     private int scelta = -1;
@@ -65,14 +64,11 @@ public class MenuPrincipale extends JFrame {
 
         JButton btnGioca = creaBottone("▶   GIOCA",   COL_ACCENT,  COL_BG);
         JButton btnRegole = creaBottone("📖  REGOLE",  COL_CARD,    COL_TEXT);
-        JButton btnCrediti = creaBottone("★   CREDITI", COL_CARD,    COL_TEXT);
         JButton btnEsci = creaBottone("✕   ESCI",    COL_ACCENT2, COL_BG);
 
         btnGioca.addActionListener(e -> { scelta = SCELTA_GIOCA; });
 
         btnRegole.addActionListener(e -> mostraRegole());
-
-        btnCrediti.addActionListener(e -> mostraCrediti());
 
         btnEsci.addActionListener(e -> {
             scelta = SCELTA_ESCI;
@@ -89,8 +85,6 @@ public class MenuPrincipale extends JFrame {
         root.add(btnGioca);
         root.add(Box.createVerticalStrut(14));
         root.add(btnRegole);
-        root.add(Box.createVerticalStrut(14));
-        root.add(btnCrediti);
         root.add(Box.createVerticalStrut(14));
         root.add(btnEsci);
 
