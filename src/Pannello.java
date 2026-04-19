@@ -140,7 +140,19 @@ public class Pannello extends JFrame {
         grid.setBorder(new EmptyBorder(8, 6, 8, 10));
 
         for (int i = 0; i < personaggiBot.length; i++) {
-            JButton b = new JButton();
+            JButton b = new JButton() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    g.setColor(getBackground());
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                    Icon ic = getIcon();
+                    if (ic != null) {
+                        int x = (getWidth()  - ic.getIconWidth())  / 2;
+                        int y = (getHeight() - ic.getIconHeight()) / 2;
+                        ic.paintIcon(this, g, x, y);
+                    }
+                }
+            };
             b.setBackground(new Color(35, 28, 80));
             b.setBorder(BorderFactory.createLineBorder(new Color(80, 40, 40), 1));
             b.setFocusPainted(false);
@@ -186,7 +198,9 @@ public class Pannello extends JFrame {
         for (int i = 0; i < personaggiBot.length; i++) {
             boolean ancora = false;
             for (Personaggio c : candidatiRimasti) {
-                if (personaggiBot[i].equals(c)) { ancora = true; break; }
+                if (personaggiBot[i].equals(c)) {
+                    ancora = true;
+                }
             }
             if (ancora) {
                 rimasti++;
