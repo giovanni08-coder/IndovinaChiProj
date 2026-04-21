@@ -9,71 +9,88 @@ public class Pannello extends JFrame {
     public static final int RISULTATO_NUOVA_PARTITA = 1;
     public static final int RISULTATO_ESCI = 2;
 
-    private static final Color COL_BG = new Color(15, 12, 41);
-    private static final Color COL_PANEL = new Color(26, 22, 65);
-    private static final Color COL_ACCENT= new Color(255, 214, 0);
+    private static final Color COL_BG      = new Color(15, 12, 41);
+    private static final Color COL_PANEL   = new Color(26, 22, 65);
+    private static final Color COL_ACCENT  = new Color(255, 214, 0);
     private static final Color COL_ACCENT2 = new Color(255, 100, 80);
-    private static final Color COL_TEXT = new Color(240, 235, 255);
+    private static final Color COL_TEXT    = new Color(240, 235, 255);
     private static final Color COL_SUBTEXT = new Color(160, 150, 200);
-    private static final Color COL_BOT_BG = new Color(10, 8, 30);
+    private static final Color COL_BOT_BG  = new Color(10, 8, 30);
+    private static final Color COL_GREEN   = new Color(40, 160, 90);
 
     private Personaggio[] personaggi;
-    private JButton[] bottoni;
-
+    private JButton[]     bottoni;
     private Personaggio[] personaggiBot;
-    private JButton[] bottoniBot;
-    private JLabel lblContatoreBot;
+    private JButton[]     bottoniBot;
+    private JLabel        lblContatoreBot;
 
-    private boolean faseScelta = true;
-    private JLabel lblDomanda;
+    private boolean     faseScelta        = true;
+    private String      risposta          = null;
+    private Personaggio scelto            = null;
+    private int         sceltaDomanda     = -1;
+    private String      sceltaNome        = null;
+    private int         sceltaFinePartita = -1;
+
+    private JLabel  lblDomanda;
+    private JPanel  footer;
     private JButton btnSi, btnNo;
-
-    private String risposta = null;
-    private Personaggio scelto = null;
-    private int sceltaDomanda = -1;
-    private String sceltaNome = null;
-    private int sceltaFinePartita = -1;
+    private JPanel  panDomande;
 
     public Pannello(Personaggio[] personaggi, Personaggio[] personaggiBot) {
-        this.personaggi = personaggi;
-        this.bottoni = new JButton[personaggi.length];
+        this.personaggi    = personaggi;
+        this.bottoni       = new JButton[personaggi.length];
         this.personaggiBot = personaggiBot;
-        this.bottoniBot = new JButton[personaggiBot.length];
+        this.bottoniBot    = new JButton[personaggiBot.length];
 
         setTitle("Indovina Chi — Partita");
-        setSize(1400, 760);
+        setSize(1400, 820);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         getContentPane().setBackground(COL_BG);
 
+        // header
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(COL_PANEL);
-        header.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, COL_ACCENT), new EmptyBorder(14, 24, 14, 24)));
+        header.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 2, 0, COL_ACCENT),
+                new EmptyBorder(14, 24, 14, 24)));
         lblDomanda = new JLabel("Scegli il tuo personaggio", SwingConstants.CENTER);
         lblDomanda.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 20));
         lblDomanda.setForeground(COL_ACCENT);
         header.add(lblDomanda, BorderLayout.CENTER);
         add(header, BorderLayout.NORTH);
 
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, creaTabelloneGiocatore(), creaTabelloneBot());
+        // tabelloni
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                creaTabelloneGiocatore(), creaTabelloneBot());
         split.setDividerLocation(700);
         split.setDividerSize(6);
         split.setBackground(COL_BG);
         split.setBorder(null);
         add(split, BorderLayout.CENTER);
 
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 12));
+        // footer
+        footer = new JPanel(new BorderLayout());
         footer.setBackground(COL_PANEL);
         footer.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, new Color(60, 50, 100)));
-        btnSi = creaBottoneRisposta("SÌ", new Color(40, 160, 90));
-        btnNo = creaBottoneRisposta("NO", COL_ACCENT2);
+
+        JPanel footerBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 12));
+        footerBtnPanel.setBackground(COL_PANEL);
+        btnSi = creaBottoneRisposta("SI'",  COL_GREEN);
+        btnNo = creaBottoneRisposta("NO",   COL_ACCENT2);
         btnSi.addActionListener(e -> risposta = "si");
         btnNo.addActionListener(e -> risposta = "no");
-        footer.add(btnSi);
-        footer.add(btnNo);
-        add(footer, BorderLayout.SOUTH);
+        footerBtnPanel.add(btnSi);
+        footerBtnPanel.add(btnNo);
+        footer.add(footerBtnPanel, BorderLayout.NORTH);
 
+        panDomande = new JPanel();
+        panDomande.setBackground(COL_PANEL);
+        panDomande.setVisible(false);
+        footer.add(panDomande, BorderLayout.CENTER);
+
+        add(footer, BorderLayout.SOUTH);
         setVisible(true);
     }
 
@@ -102,7 +119,7 @@ public class Pannello extends JFrame {
             b.addActionListener(e -> {
                 if (faseScelta) {
                     scelto = personaggi[idx];
-                    lblDomanda.setText("✔ Hai scelto: " + scelto.getNome());
+                    lblDomanda.setText("Hai scelto: " + scelto.getNome());
                 }
             });
             grid.add(b);
@@ -132,7 +149,6 @@ public class Pannello extends JFrame {
         lblContatoreBot.setFont(new Font("Serif", Font.ITALIC, 12));
         lblContatoreBot.setForeground(COL_SUBTEXT);
         intestazione.add(lblContatoreBot, BorderLayout.EAST);
-
         wrapper.add(intestazione, BorderLayout.NORTH);
 
         JPanel grid = new JPanel(new GridLayout(0, 4, 6, 6));
@@ -156,7 +172,7 @@ public class Pannello extends JFrame {
             b.setBackground(new Color(35, 28, 80));
             b.setBorder(BorderFactory.createLineBorder(new Color(80, 40, 40), 1));
             b.setFocusPainted(false);
-            b.setEnabled(false);   // solo visivo, non cliccabile
+            b.setEnabled(false);
             bottoniBot[i] = b;
             setImmagineBotNormale(i);
             grid.add(b);
@@ -169,6 +185,8 @@ public class Pannello extends JFrame {
         return wrapper;
     }
 
+    // ── API pubblica ──────────────────────────────────────────────────────────
+
     public Personaggio aspettaScelta() {
         lblDomanda.setText("SCEGLI IL TUO PERSONAGGIO SEGRETO");
         while (scelto == null) sleep();
@@ -177,19 +195,79 @@ public class Pannello extends JFrame {
     }
 
     public String aspettaRisposta(String domanda) {
-        lblDomanda.setText(domanda);
-        lblDomanda.repaint();
-        lblDomanda.revalidate();
+        SwingUtilities.invokeLater(() -> {
+            lblDomanda.setText(domanda);
+            lblDomanda.setForeground(COL_ACCENT);
+            nascondiPanDomande();
+            mostraBottoniSiNo(true);
+        });
         risposta = null;
         while (risposta == null) sleep();
         return risposta;
     }
 
+    public int aspettaSceltaDomanda(List<String> domande) {
+        sceltaDomanda = -1;
+        SwingUtilities.invokeLater(() -> {
+            lblDomanda.setText("Scegli la domanda da fare al bot:");
+            lblDomanda.setForeground(COL_ACCENT);
+            mostraBottoniSiNo(false);
+
+            panDomande.removeAll();
+            panDomande.setLayout(new FlowLayout(FlowLayout.CENTER, 14, 10));
+            panDomande.setBackground(COL_PANEL);
+
+            for (int i = 0; i < domande.size(); i++) {
+                final int indice = i + 1;
+                JButton btn = creaBottoneInline(indice + ")  " + domande.get(i));
+                btn.addActionListener(e -> {
+                    sceltaDomanda = indice;
+                    nascondiPanDomande();
+                });
+                panDomande.add(btn);
+            }
+
+            panDomande.setVisible(true);
+            footer.revalidate();
+            footer.repaint();
+        });
+
+        while (sceltaDomanda == -1) sleep();
+        return sceltaDomanda;
+    }
+
+    public String aspettaSceltaNome(List<String> nomi) {
+        sceltaNome = null;
+        SwingUtilities.invokeLater(() -> {
+            lblDomanda.setText("Chi pensi che sia il personaggio del bot?");
+            lblDomanda.setForeground(COL_ACCENT);
+            mostraBottoniSiNo(false);
+
+            panDomande.removeAll();
+            panDomande.setLayout(new FlowLayout(FlowLayout.CENTER, 14, 10));
+            panDomande.setBackground(COL_PANEL);
+
+            for (String nome : nomi) {
+                JButton btn = creaBottoneInline(nome);
+                btn.addActionListener(e -> {
+                    sceltaNome = nome;
+                    nascondiPanDomande();
+                });
+                panDomande.add(btn);
+            }
+
+            panDomande.setVisible(true);
+            footer.revalidate();
+            footer.repaint();
+        });
+
+        while (sceltaNome == null) sleep();
+        return sceltaNome;
+    }
+
     public void eliminaPersonaggi(ArrayList<Personaggio> daEliminare) {
         for (int i = 0; i < personaggi.length; i++) {
-            if (daEliminare.contains(personaggi[i])) {
-                setImmagineSbarrata(i);
-            }
+            if (daEliminare.contains(personaggi[i])) setImmagineSbarrata(i);
         }
     }
 
@@ -198,173 +276,97 @@ public class Pannello extends JFrame {
         for (int i = 0; i < personaggiBot.length; i++) {
             boolean ancora = false;
             for (Personaggio c : candidatiRimasti) {
-                if (personaggiBot[i].equals(c)) {
-                    ancora = true;
-                }
+                if (personaggiBot[i].equals(c)) { ancora = true; }
             }
-            if (ancora) {
-                rimasti++;
-                setImmagineBotNormale(i);
-            } else {
-                setImmagineBotSbarrata(i);
-            }
+            if (ancora) { rimasti++; setImmagineBotNormale(i); }
+            else        { setImmagineBotSbarrata(i); }
         }
         lblContatoreBot.setText("Rimasti: " + rimasti);
         lblContatoreBot.repaint();
     }
 
-    public int aspettaSceltaDomanda(List<String> domande) {
-        sceltaDomanda = -1;
-
-        JDialog dialog = new JDialog(this, "Quale domanda vuoi fare al bot?", true);
-        dialog.getContentPane().setBackground(COL_BG);
-        dialog.setLayout(new BorderLayout());
-
-        JLabel titolo = new JLabel("Scegli una domanda:", SwingConstants.CENTER);
-        titolo.setFont(new Font("Serif", Font.BOLD, 15));
-        titolo.setForeground(COL_ACCENT);
-        titolo.setBorder(new EmptyBorder(16, 20, 10, 20));
-        dialog.add(titolo, BorderLayout.NORTH);
-
-        JPanel panel = new JPanel();
-        panel.setBackground(COL_BG);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new EmptyBorder(0, 24, 20, 24));
-
-        for (int i = 0; i < domande.size(); i++) {
-            final int indice = i + 1;
-            JButton btn = creaBottoneDialog(indice + ")  " + domande.get(i));
-            btn.addActionListener(e -> { sceltaDomanda = indice; dialog.dispose(); });
-            panel.add(btn);
-            panel.add(Box.createVerticalStrut(10));
-        }
-
-        dialog.add(panel, BorderLayout.CENTER);
-        dialog.pack();
-        dialog.setMinimumSize(new Dimension(400, 200));
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-        return sceltaDomanda;
-    }
-
-    public String aspettaSceltaNome(List<String> nomi) {
-        sceltaNome = null;
-
-        JDialog dialog = new JDialog(this, "Indovina il personaggio del bot!", true);
-        dialog.getContentPane().setBackground(COL_BG);
-        dialog.setLayout(new BorderLayout());
-
-        JLabel titolo = new JLabel("Chi pensi che sia?", SwingConstants.CENTER);
-        titolo.setFont(new Font("Serif", Font.BOLD, 15));
-        titolo.setForeground(COL_ACCENT);
-        titolo.setBorder(new EmptyBorder(16, 20, 10, 20));
-        dialog.add(titolo, BorderLayout.NORTH);
-
-        JPanel panel = new JPanel();
-        panel.setBackground(COL_BG);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new EmptyBorder(0, 24, 20, 24));
-
-        for (String nome : nomi) {
-            JButton btn = creaBottoneDialog(nome);
-            btn.addActionListener(e -> { sceltaNome = nome; dialog.dispose(); });
-            panel.add(btn);
-            panel.add(Box.createVerticalStrut(10));
-        }
-
-        dialog.add(panel, BorderLayout.CENTER);
-        dialog.pack();
-        dialog.setMinimumSize(new Dimension(360, 200));
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-        return sceltaNome;
-    }
-
     public int mostraRisultato(boolean indovinato, Personaggio mioPersonaggio, Personaggio personaggioBot) {
         sceltaFinePartita = -1;
-        btnSi.setEnabled(false);
-        btnNo.setEnabled(false);
 
-        if (indovinato) {
-            lblDomanda.setText("HAI VINTO! Era: " + personaggioBot.getNome());
-        } else {
-            lblDomanda.setText("HAI PERSO! Il bot ha indovinato: " + mioPersonaggio.getNome());
-        }
+        SwingUtilities.invokeLater(() -> {
+            mostraBottoniSiNo(false);
 
-        JDialog dialog = new JDialog(this, "Fine Partita", true);
-        dialog.getContentPane().setBackground(COL_BG);
-        dialog.setLayout(new BorderLayout());
-        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            if (indovinato) {
+                lblDomanda.setText("HAI VINTO! Il personaggio del bot era: " + personaggioBot.getNome());
+                lblDomanda.setForeground(COL_ACCENT);
+            } else {
+                lblDomanda.setText("HAI PERSO! Il bot ha indovinato che eri: " + mioPersonaggio.getNome());
+                lblDomanda.setForeground(COL_ACCENT2);
+            }
 
-        JLabel lblTitolo;
-        if (indovinato) {
-            lblTitolo = new JLabel("🏆  HAI VINTO!", SwingConstants.CENTER);
-        } else {
-            lblTitolo = new JLabel("💀  HAI PERSO!", SwingConstants.CENTER);
-        }
-        lblTitolo.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 30));
-        lblTitolo.setForeground(indovinato ? COL_ACCENT : COL_ACCENT2);
-        lblTitolo.setBorder(new EmptyBorder(24, 20, 8, 20));
-        dialog.add(lblTitolo, BorderLayout.NORTH);
+            panDomande.removeAll();
+            panDomande.setLayout(new BorderLayout());
+            panDomande.setBackground(COL_PANEL);
 
-        JPanel corpo = new JPanel();
-        corpo.setBackground(COL_BG);
-        corpo.setLayout(new BoxLayout(corpo, BoxLayout.Y_AXIS));
-        corpo.setBorder(new EmptyBorder(0, 32, 20, 32));
+            JPanel corpo = new JPanel();
+            corpo.setBackground(COL_PANEL);
+            corpo.setLayout(new BoxLayout(corpo, BoxLayout.Y_AXIS));
+            corpo.setBorder(new EmptyBorder(8, 0, 12, 0));
 
-        JLabel lblImg = new JLabel();
-        lblImg.setAlignmentX(Component.CENTER_ALIGNMENT);
-        try {
-            ImageIcon ico = new ImageIcon(personaggioBot.getUrl());
-            Image img = ico.getImage().getScaledInstance(110, 110, Image.SCALE_SMOOTH);
-            lblImg.setIcon(new ImageIcon(img));
-        } catch (Exception ignored) {}
-        corpo.add(lblImg);
-        corpo.add(Box.createVerticalStrut(12));
+            // miniatura personaggio
+            JLabel lblImg = new JLabel();
+            lblImg.setAlignmentX(Component.CENTER_ALIGNMENT);
+            try {
+                ImageIcon ico = new ImageIcon(personaggioBot.getUrl());
+                Image img = ico.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+                lblImg.setIcon(new ImageIcon(img));
+            } catch (Exception ignored) {}
+            corpo.add(lblImg);
+            corpo.add(Box.createVerticalStrut(8));
 
-        String msg;
-        if (indovinato) {
-            msg = "Il personaggio del bot era <b>" + personaggioBot.getNome() + "</b>.<br>Complimenti!";
-        } else {
-            msg = "Il bot ha indovinato che eri <b>" + mioPersonaggio.getNome() + "</b>.<br>Ritenta!";
-        }
-        JLabel lblMsg = new JLabel("<html><div style='text-align:center;font-family:Serif;font-size:13px;color:#d0c8f0;'>" + msg + "</div></html>", SwingConstants.CENTER);
-        lblMsg.setAlignmentX(Component.CENTER_ALIGNMENT);
-        corpo.add(lblMsg);
-        corpo.add(Box.createVerticalStrut(20));
+            String msg = indovinato
+                    ? "<html><center>Era <b>" + personaggioBot.getNome() + "</b>. Complimenti!</center></html>"
+                    : "<html><center>Il bot ha indovinato che eri <b>" + mioPersonaggio.getNome() + "</b>. Ritenta!</center></html>";
+            JLabel lblMsg = new JLabel(msg, SwingConstants.CENTER);
+            lblMsg.setFont(new Font("Serif", Font.PLAIN, 13));
+            lblMsg.setForeground(COL_TEXT);
+            lblMsg.setAlignmentX(Component.CENTER_ALIGNMENT);
+            corpo.add(lblMsg);
+            corpo.add(Box.createVerticalStrut(10));
 
-        JSeparator sep = new JSeparator();
-        sep.setForeground(new Color(80, 70, 130));
-        sep.setMaximumSize(new Dimension(300, 2));
-        corpo.add(sep);
-        corpo.add(Box.createVerticalStrut(18));
+            JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+            btnPanel.setBackground(COL_PANEL);
 
-        JLabel lblScelta = new JLabel("Cosa vuoi fare?", SwingConstants.CENTER);
-        lblScelta.setFont(new Font("Serif", Font.BOLD, 14));
-        lblScelta.setForeground(COL_SUBTEXT);
-        lblScelta.setAlignmentX(Component.CENTER_ALIGNMENT);
-        corpo.add(lblScelta);
-        corpo.add(Box.createVerticalStrut(14));
-        JButton btnNuova = creaBottoneDialog("▶   NUOVA PARTITA");
-        btnNuova.setForeground(COL_BG);
-        btnNuova.setBackground(COL_ACCENT);
-        btnNuova.addActionListener(e -> { sceltaFinePartita = RISULTATO_NUOVA_PARTITA; dialog.dispose(); });
-        corpo.add(btnNuova);
-        corpo.add(Box.createVerticalStrut(10));
-        JButton btnEsci = creaBottoneDialog("✕   ESCI");
-        btnEsci.setForeground(Color.WHITE);
-        btnEsci.setBackground(COL_ACCENT2);
-        btnEsci.addActionListener(e -> { sceltaFinePartita = RISULTATO_ESCI; dialog.dispose(); });
-        corpo.add(btnEsci);
-        corpo.add(Box.createVerticalStrut(16));
-        dialog.add(corpo, BorderLayout.CENTER);
-        dialog.pack();
-        dialog.setMinimumSize(new Dimension(380, 460));
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-        btnSi.setEnabled(true);
-        btnNo.setEnabled(true);
+            JButton btnNuova = creaBottoneRisposta("NUOVA PARTITA", COL_ACCENT);
+            btnNuova.setForeground(COL_BG);
+            btnNuova.addActionListener(e -> sceltaFinePartita = RISULTATO_NUOVA_PARTITA);
+            btnPanel.add(btnNuova);
+
+            JButton btnEsci = creaBottoneRisposta("ESCI", COL_ACCENT2);
+            btnEsci.setForeground(Color.WHITE);
+            btnEsci.addActionListener(e -> sceltaFinePartita = RISULTATO_ESCI);
+            btnPanel.add(btnEsci);
+
+            corpo.add(btnPanel);
+            panDomande.add(corpo, BorderLayout.CENTER);
+            panDomande.setVisible(true);
+            footer.revalidate();
+            footer.repaint();
+        });
+
+        while (sceltaFinePartita == -1) sleep();
         return sceltaFinePartita;
+    }
+
+    // ── helper ────────────────────────────────────────────────────────────────
+
+    private void mostraBottoniSiNo(boolean visibili) {
+        btnSi.setVisible(visibili);
+        btnNo.setVisible(visibili);
+        btnSi.getParent().revalidate();
+        btnSi.getParent().repaint();
+    }
+
+    private void nascondiPanDomande() {
+        panDomande.setVisible(false);
+        panDomande.removeAll();
+        footer.revalidate();
+        footer.repaint();
     }
 
     private void setImmagineNormale(int i) {
@@ -392,26 +394,28 @@ public class Pannello extends JFrame {
         btn.setBackground(colore);
         btn.setOpaque(true);
         btn.setFocusPainted(false);
-        btn.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(colore.darker(), 1), new EmptyBorder(8, 36, 8, 36)));
+        btn.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(colore.darker(), 1),
+                new EmptyBorder(8, 36, 8, 36)));
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return btn;
     }
 
-    private JButton creaBottoneDialog(String testo) {
+    private JButton creaBottoneInline(String testo) {
         JButton btn = new JButton(testo);
-        btn.setFont(new Font("Serif", Font.BOLD, 14));
+        btn.setFont(new Font("Serif", Font.BOLD, 13));
         btn.setForeground(COL_TEXT);
         btn.setBackground(new Color(40, 35, 90));
         btn.setOpaque(true);
         btn.setFocusPainted(false);
-        btn.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(80, 70, 140), 1), new EmptyBorder(9, 20, 9, 20)));
+        btn.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(80, 70, 140), 1),
+                new EmptyBorder(7, 16, 7, 16)));
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btn.setMaximumSize(new Dimension(320, 44));
         return btn;
     }
 
     private void sleep() {
-        try { Thread.sleep(100); } catch (Exception ignored) {}
+        try { Thread.sleep(80); } catch (Exception ignored) {}
     }
 }

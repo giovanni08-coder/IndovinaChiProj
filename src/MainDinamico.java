@@ -194,78 +194,78 @@ void main() throws Exception {
             }
         }
         System.out.println(Arrays.asList(PersonaggiBot));
-            errore=true;
-            while (errore) {
+        errore=true;
+        while (errore) {
+            try {
+                sceltaGiocatore = Integer.parseInt(IO.readln("Di queste domande:" + DomandeBot + " quale vuoi fare all'altro giocatore (dai 1...n): "));
+                if (sceltaGiocatore>DomandeBot.size() || sceltaGiocatore <= 0 ){
+                    throw new IllegalArgumentException("Scegli la domanda no una a caso che non esiste");
+                }
+                errore=false;
+            } catch (Exception e) {
+                System.out.println("Non scrivere corbellerie scegli la domanda che vuoi fare pls ");
+            }
+        }
+        PersonaggiBot = VerificaRispostaBot(PersonaggioRandomBot,PersonaggiBot,TrovaGenere(GeneriDomandeBot,DomandeBot.get(sceltaGiocatore-1)),DomandeBot.get(sceltaGiocatore-1),GeneriDomandeBot);
+        errore = true;
+        if (PersonaggiBot.length<=6 && PersonaggiBot.length>1) {
+            System.out.println(Arrays.asList(PersonaggiBot));
+            String siNo = "";
+            while (errore)
                 try {
-                    sceltaGiocatore = Integer.parseInt(IO.readln("Di queste domande:" + DomandeBot + " quale vuoi fare all'altro giocatore (dai 1...n): "));
-                    if (sceltaGiocatore>DomandeBot.size() || sceltaGiocatore <= 0 ){
-                        throw new IllegalArgumentException("Scegli la domanda no una a caso che non esiste");
+                    siNo = IO.readln("Vuoi indovinare Il personaggio");
+                    siNo = siNo.trim().toLowerCase();
+                    if (!(siNo.equals("si") || siNo.equals("no"))) {
+                        throw new IllegalArgumentException("Non puoi inserire questa risposta");
                     }
-                    errore=false;
+                    errore = false;
                 } catch (Exception e) {
-                    System.out.println("Non scrivere corbellerie scegli la domanda che vuoi fare pls ");
+                    System.out.println("Non puoi mettere questa risposta");
                 }
-            }
-            PersonaggiBot = VerificaRispostaBot(PersonaggioRandomBot,PersonaggiBot,TrovaGenere(GeneriDomandeBot,DomandeBot.get(sceltaGiocatore-1)),DomandeBot.get(sceltaGiocatore-1),GeneriDomandeBot);
             errore = true;
-            if (PersonaggiBot.length<=6 && PersonaggiBot.length>1) {
-                System.out.println(Arrays.asList(PersonaggiBot));
-                String siNo = "";
-                while (errore)
+            if (siNo.equals("si")){
+                List<String> NomiPersonaggi = new ArrayList<>();
+                for (int i=0;i<PersonaggiBot.length;i++){
+                    NomiPersonaggi.add(PersonaggiBot[i].getNome());
+                }
+                System.out.println(NomiPersonaggi);
+                String IndovinaPersonaggio="";
+                while (errore) {
                     try {
-                        siNo = IO.readln("Vuoi indovinare Il personaggio");
-                        siNo = siNo.trim().toLowerCase();
-                        if (!(siNo.equals("si") || siNo.equals("no"))) {
-                            throw new IllegalArgumentException("Non puoi inserire questa risposta");
+                        IndovinaPersonaggio = IO.readln("Indovina il nome di un personaggio");
+                        IndovinaPersonaggio = IndovinaPersonaggio.substring(0,1).toUpperCase() + IndovinaPersonaggio.substring(1).toLowerCase();
+                        System.out.println(IndovinaPersonaggio);
+                        if (!NomiPersonaggi.contains(IndovinaPersonaggio)) {
+                            throw new IllegalArgumentException("Cosa hai scritto?");
                         }
-                        errore = false;
+                        errore=false;
                     } catch (Exception e) {
-                        System.out.println("Non puoi mettere questa risposta");
-                    }
-                errore = true;
-                if (siNo.equals("si")){
-                    List<String> NomiPersonaggi = new ArrayList<>();
-                    for (int i=0;i<PersonaggiBot.length;i++){
-                        NomiPersonaggi.add(PersonaggiBot[i].getNome());
-                    }
-                    System.out.println(NomiPersonaggi);
-                    String IndovinaPersonaggio="";
-                    while (errore) {
-                        try {
-                            IndovinaPersonaggio = IO.readln("Indovina il nome di un personaggio");
-                            IndovinaPersonaggio = IndovinaPersonaggio.substring(0,1).toUpperCase() + IndovinaPersonaggio.substring(1).toLowerCase();
-                            System.out.println(IndovinaPersonaggio);
-                            if (!NomiPersonaggi.contains(IndovinaPersonaggio)) {
-                                throw new IllegalArgumentException("Cosa hai scritto?");
-                            }
-                            errore=false;
-                        } catch (Exception e) {
-                            System.out.println("o il nome del tuo personaggio non è scritto bene o non esiste");
-                        }
-                    }
-                    if (PersonaggioRandomBot.getNome().equals(IndovinaPersonaggio)){
-                        System.out.println("Hai indovinato il personaggio è: " + PersonaggioRandomBot);
-                        List<Personaggio> lista = new ArrayList<>(Arrays.asList(PersonaggiBot));
-                        lista.clear();
-                        PersonaggiBot = lista.toArray(new Personaggio[0]);
-                    }else {
-                        System.out.println("Mi dispiace " + IndovinaPersonaggio + " non è il personaggio del tuo avversario");
-                        List<Personaggio> lista = new ArrayList<>(Arrays.asList(PersonaggiBot));
-                        boolean trovato = true;
-                        int i=0;
-                        while (trovato){
-                            if (lista.get(i).getNome().equals(IndovinaPersonaggio)){
-                                lista.remove(i);
-                                trovato=false;
-                            }
-                            i++;
-                        }
-                        PersonaggiBot = lista.toArray(new Personaggio[0]);
-
+                        System.out.println("o il nome del tuo personaggio non è scritto bene o non esiste");
                     }
                 }
+                if (PersonaggioRandomBot.getNome().equals(IndovinaPersonaggio)){
+                    System.out.println("Hai indovinato il personaggio è: " + PersonaggioRandomBot);
+                    List<Personaggio> lista = new ArrayList<>(Arrays.asList(PersonaggiBot));
+                    lista.clear();
+                    PersonaggiBot = lista.toArray(new Personaggio[0]);
+                }else {
+                    System.out.println("Mi dispiace " + IndovinaPersonaggio + " non è il personaggio del tuo avversario");
+                    List<Personaggio> lista = new ArrayList<>(Arrays.asList(PersonaggiBot));
+                    boolean trovato = true;
+                    int i=0;
+                    while (trovato){
+                        if (lista.get(i).getNome().equals(IndovinaPersonaggio)){
+                            lista.remove(i);
+                            trovato=false;
+                        }
+                        i++;
+                    }
+                    PersonaggiBot = lista.toArray(new Personaggio[0]);
+
+                }
             }
-            }
+        }
+    }
     if (MieiPersonaggi.length==1){
         System.out.println("Il tuo personaggio è " + MieiPersonaggi[0]);
     }
